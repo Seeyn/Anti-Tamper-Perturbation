@@ -1,0 +1,17 @@
+mask: /home/zelin3/projects/Anti-tamper-Perturbation/masks/050_mask.pt # the path of the mask for perturbation
+
+CAAT: 
+  radius: 0.05 
+  step_size: 5e-3
+
+METACLOAK: 
+  radius: 0.15 
+  step_size: 5e-3
+
+ADVDM: 
+  radius: 0.1 
+  step_size: 2e-3
+
+ANTIDB: 
+  radius: 0.05
+  step_size: 5e-3

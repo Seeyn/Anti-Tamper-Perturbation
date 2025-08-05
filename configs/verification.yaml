@@ -1,0 +1,28 @@
+
+seed: 1042
+message_length: 32
+weights:  /home/zelin3/projects/Anti-tamper-Perturbation/model_weights/random_050_block16_wreg--epoch-65000.pyt
+
+CAAT: 
+  dir_suffix: 250/
+  img_prefix: 250_noise_
+
+ANTIDB: 
+  dir_suffix: noise-ckpt/50/
+  img_prefix: 50_noise_
+
+ADVDM: 
+  dir_suffix: ''
+  img_prefix: noise_
+
+METACLOAK: 
+  dir_suffix: '' 
+  img_prefix: noisy_
+
+Origin: 
+  dir_suffix: 'set_B/' 
+  img_prefix: ''
+
+GridPure:
+  dir_suffix: '' 
+  img_prefix: ''

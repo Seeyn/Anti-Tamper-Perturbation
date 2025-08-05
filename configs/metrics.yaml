@@ -1,0 +1,31 @@
+ 
+instance_dir: ['/home/zelin3/projects/camera_ready_iccv/Anti-Tamper-Perturbation/test/ATP_CAAT']
+output_dir:  /home/zelin3/projects/camera_ready_iccv/Anti-Tamper-Perturbation/metrics/results # the output dir for evaluation result, the results file will be named by the instance_dir
+
+prompt: a_photo_of_sks_person # the input prompt for generation
+
+CelebA-HQ:
+  id_emb_path: /home/zelin3/Data/celeba_avg_id
+
+VGGFace2:
+  id_emb_path: /home/zelin3/Data/vggface_avg_id
+
+CAAT: 
+  dir_suffix:  250/
+  img_prefix: 250_noise_
+
+ANTIDB: 
+  dir_suffix: '50/'
+  img_prefix: 50_noise_
+
+ADVDM: 
+  dir_suffix: ''
+  img_prefix: noise_
+
+METACLOAK: 
+  dir_suffix: 'noise-ckpt/final/'
+  img_prefix: noisy_
+
+Origin: 
+  dir_suffix: 'set_B/' #'noise-ckpt/final/'
+  img_prefix: ''
