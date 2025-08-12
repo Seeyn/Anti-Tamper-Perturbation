@@ -48,8 +48,8 @@ We recommend integrate CAAT with ATP which achieves good balance in generation e
 ```
 output_dir/
 ├── Authorized/  # Authorized images
-├        ├ {id}/ # Authorized images separated by id
-├        ├ Authorization_messages/ # Authorization messages for each image
+|       ├ {id}/ # Authorized images separated by id
+|       ├ Authorization_messages/ # Authorization messages for each image
 └── ATP_{method}/     # Protected Images by ATP+{method}
          ├ {id}/ # ATP Perturbed images separated by id
 ```
