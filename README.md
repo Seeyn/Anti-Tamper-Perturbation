@@ -1,7 +1,7 @@
 # 🛡️ Anti-Tamper Protection for Unauthorized Individual Image Generation 
 
 **Official Code for ICCV 2025 Paper**  
-📄 **[Anti-Tamper Protection for Unauthorized Individual Image Generation](https://arxiv.org/abs/xxxx.xxxxx)**  
+📄 **[Anti-Tamper Protection for Unauthorized Individual Image Generation](https://arxiv.org/abs/2508.06325)**  
 
 
 <div style="text-align;">
