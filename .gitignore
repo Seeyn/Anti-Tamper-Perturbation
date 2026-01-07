@@ -28,3 +28,5 @@ result_copy.sh
 evaluation/generate_clean.py
 results_img
 protection/ANTIDB/data
+
+data/
