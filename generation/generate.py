@@ -1,3 +1,5 @@
+import subprocess
+import sys
 from glob import glob
 import os
 from pathlib import Path
@@ -38,29 +40,38 @@ assert purification in set(["naive", "gridpure", ""])
 
 config_path = Path("configs/generation.yaml").resolve()
 config = load_config(config_path)
-device = "".join(filter(str.isdigit, device))
+device_id = "".join(filter(str.isdigit, device))
 instance_paths = list(Path(input_dir).iterdir())
 dir_suffix = config[method]["dir_suffix"]
-for each in instance_paths:
-    i_name = each.name
-    if ".pt" in i_name:
-        continue
-    print(i_name)
-    train_dir = Path(input_dir) / i_name / dir_suffix
-    if purification == "":
-        os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB.sh %s "
-            % (device, train_dir)
-        )
-    elif purification == "naive":
-        os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB_withPurified.sh %s "
-            % (device, train_dir)
-        )
-    elif purification == "gridpure":
-        os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB_gridpure.sh %s "
-            % (device, train_dir)
-        )
-    else:
-        raise Exception("check purification type")
+
+try:
+    for each in instance_paths:
+        i_name = each.name
+        if ".pt" in i_name:
+            continue
+        print(f"Processing: {i_name}")
+        train_dir = Path(input_dir) / i_name / dir_suffix
+
+        env = os.environ.copy()
+        env["CUDA_VISIBLE_DEVICES"] = device_id
+
+        if purification == "":
+            script = "generation/scripts/train_DB.sh"
+        elif purification == "naive":
+            script = "generation/scripts/train_DB_withPurified.sh"
+        elif purification == "gridpure":
+            script = "generation/scripts/train_DB_gridpure.sh"
+        else:
+            raise Exception("check purification type")
+
+        subprocess.run(["bash", script, str(train_dir)], env=env, check=True)
+
+except KeyboardInterrupt:
+    print("\n[!] 收到中断信号，正在停止当前任务...")
+    sys.exit(130)
+except subprocess.CalledProcessError as e:
+    print(f"\n[!] 脚本执行失败: {e}")
+    sys.exit(1)
+except Exception as e:
+    print(f"\n[!] 发生错误: {e}")
+    sys.exit(1)

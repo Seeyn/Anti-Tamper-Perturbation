@@ -1,3 +1,7 @@
+#!/bin/bash
+set -e
+trap "echo '[!] 任务被中断'; exit 1" INT
+
 export MODEL_NAME="stabilityai/stable-diffusion-2-1-base"
 export OUTPUT_DIR=$2
 export INSTANCE_DIR=$1

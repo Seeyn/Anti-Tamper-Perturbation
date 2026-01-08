@@ -1,3 +1,7 @@
+#!/bin/bash
+set -e
+trap "echo '[!] 任务被中断'; exit 1" INT
+
 #### Variables that you should set before running the script
 # setting the GPU id
 export ADB_PROJECT_ROOT=$3

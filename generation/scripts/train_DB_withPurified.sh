@@ -1,3 +1,7 @@
+#!/bin/bash
+set -e
+trap "echo '[!] 任务被中断'; exit 1" INT
+
 export EXPERIMENT_NAME="ASPL_purified_freq"
 export MODEL_PATH="stabilityai/stable-diffusion-2-1-base"
 export OUTPUT_DIR=$1

@@ -13,6 +13,7 @@ import torch.utils.cpp_extension
 import importlib
 import hashlib
 import shutil
+import subprocess
 from pathlib import Path
 
 from torch.utils.file_baton import FileBaton
@@ -61,13 +62,21 @@ def get_plugin(module_name, sources, **build_kwargs):
 
     try:  # pylint: disable=too-many-nested-blocks
         # Make sure we can find the necessary compiler binaries.
-        if os.name == "nt" and os.system("where cl.exe >nul 2>nul") != 0:
-            compiler_bindir = _find_compiler_bindir()
-            if compiler_bindir is None:
-                raise RuntimeError(
-                    f'Could not find MSVC/GCC/CLANG installation on this computer. Check _find_compiler_bindir() in "{__file__}".'
+        if os.name == "nt":
+            try:
+                subprocess.run(
+                    ["where", "cl.exe"],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                 )
-            os.environ["PATH"] += ";" + compiler_bindir
+            except (subprocess.CalledProcessError, FileNotFoundError):
+                compiler_bindir = _find_compiler_bindir()
+                if compiler_bindir is None:
+                    raise RuntimeError(
+                        f'Could not find MSVC/GCC/CLANG installation on this computer. Check _find_compiler_bindir() in "{__file__}".'
+                    )
+                os.environ["PATH"] += ";" + compiler_bindir
 
         # Compile and load.
         verbose_build = verbosity == "full"

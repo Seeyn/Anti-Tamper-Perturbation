@@ -1,4 +1,5 @@
-import os
+import subprocess
+import sys
 from pathlib import Path
 import yaml
 import argparse
@@ -48,24 +49,46 @@ device = args.device
 method = args.method
 
 
-print("###Authorization Start###")
-os.system(
-    "python authorization/infer.py --device %s --input_dir  %s --output_dir %s"
-    % (device, input_dir, Path(output_dir) / "Authorized")
-)
-print("Output at: %s" % output_dir)
-print("###Authorization End###")
-
-print()
-
-print("###Protection Start###")
-os.system(
-    "python protection/protect.py --device %s --method %s --input_dir  %s --output_dir %s"
-    % (
-        device,
-        method,
-        Path(output_dir) / "Authorized",
-        Path(output_dir) / f"ATP_{method}",
+try:
+    print("###Authorization Start###")
+    subprocess.run(
+        [
+            sys.executable,
+            "authorization/infer.py",
+            "--device",
+            device,
+            "--input_dir",
+            input_dir,
+            "--output_dir",
+            str(Path(output_dir) / "Authorized"),
+        ],
+        check=True,
     )
-)
-print("###Protection End###")
+    print("Output at: %s" % output_dir)
+    print("###Authorization End###")
+
+    print()
+
+    print("###Protection Start###")
+    subprocess.run(
+        [
+            sys.executable,
+            "protection/protect.py",
+            "--device",
+            device,
+            "--method",
+            method,
+            "--input_dir",
+            str(Path(output_dir) / "Authorized"),
+            "--output_dir",
+            str(Path(output_dir) / f"ATP_{method}"),
+        ],
+        check=True,
+    )
+    print("###Protection End###")
+except KeyboardInterrupt:
+    print("\n[!] 收到中断信号，正在退出...")
+    sys.exit(130)
+except subprocess.CalledProcessError as e:
+    print(f"\n[!] 执行出错: {e}")
+    sys.exit(1)

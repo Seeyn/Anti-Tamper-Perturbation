@@ -1,3 +1,5 @@
+import subprocess
+import sys
 from glob import glob
 import os
 from pathlib import Path
@@ -45,56 +47,69 @@ assert method in set(["CAAT", "ANTIDB", "ADVDM", "METACLOAK"])
 
 config_path = Path("configs/protection.yaml").resolve()
 config = load_config(config_path)
-device = "".join(filter(str.isdigit, device))
+device_id = "".join(filter(str.isdigit, device))
 Path(output_dir).mkdir(parents=True, exist_ok=True)
 input_paths = list(Path(input_dir).iterdir())
+
 for key in config[method]:
     print(key, config[method][key])
 
-if method == "CAAT":
+try:
     for each in input_paths:
         i_name = each.name
         if ".pt" in i_name:
             continue
-        print(i_name)
-        os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash protection/CAAT/train_CAAT_freq.sh %s %s %s"
-            % (device, each / "set_B", Path(output_dir) / i_name, config_path)
-        )
+        print(f"Processing: {i_name}")
 
-elif method == "METACLOAK":
-    for each in input_paths:
-        i_name = each.name
-        if ".pt" in i_name:
-            continue
-        print(i_name)
-        project_path = Path("protection/Metacloak").resolve()
-        os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash protection/Metacloak/script/gen_and_eval_freq.sh %s %s %s"
-            % (device, each, Path(output_dir) / i_name, project_path)
-        )
+        env = os.environ.copy()
+        env["CUDA_VISIBLE_DEVICES"] = device_id
 
-elif method == "ADVDM":
-    for each in input_paths:
-        i_name = each.name
-        if ".pt" in i_name:
-            continue
-        print(i_name)
-        os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash protection/ADVDM/scripts/train_adv_freq.sh %s %s %s"
-            % (device, each / "set_B", Path(output_dir) / i_name, config_path)
-        )
+        cmd = []
+        if method == "CAAT":
+            cmd = [
+                "bash",
+                "protection/CAAT/train_CAAT_freq.sh",
+                str(each / "set_B"),
+                str(Path(output_dir) / i_name),
+                str(config_path),
+            ]
+        elif method == "METACLOAK":
+            project_path = Path("protection/Metacloak").resolve()
+            cmd = [
+                "bash",
+                "protection/Metacloak/script/gen_and_eval_freq.sh",
+                str(each),
+                str(Path(output_dir) / i_name),
+                str(project_path),
+            ]
+        elif method == "ADVDM":
+            cmd = [
+                "bash",
+                "protection/ADVDM/scripts/train_adv_freq.sh",
+                str(each / "set_B"),
+                str(Path(output_dir) / i_name),
+                str(config_path),
+            ]
+        elif method == "ANTIDB":
+            cmd = [
+                "bash",
+                "protection/ANTIDB/scripts/gen_aspl_freq.sh",
+                str(each),
+                str(Path(output_dir) / i_name),
+                str(config_path),
+            ]
+        else:
+            raise ValueError("Method Unknown")
 
-elif method == "ANTIDB":
-    for each in input_paths:
-        i_name = each.name
-        if ".pt" in i_name:
-            continue
-        print(i_name)
-        os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash protection/ANTIDB/scripts/gen_aspl_freq.sh %s %s %s"
-            % (device, each, Path(output_dir) / i_name, config_path)
-        )
+        if cmd:
+            subprocess.run(cmd, env=env, check=True)
 
-else:
-    raise ValueError("Method Unknown")
+except KeyboardInterrupt:
+    print("\n[!] 收到中断信号，正在停止当前任务...")
+    sys.exit(130)
+except subprocess.CalledProcessError as e:
+    print(f"\n[!] 任务执行失败: {e}")
+    sys.exit(1)
+except Exception as e:
+    print(f"\n[!] 发生错误: {e}")
+    sys.exit(1)
