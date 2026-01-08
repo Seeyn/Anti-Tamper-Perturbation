@@ -44,7 +44,7 @@ assert method in set(["CAAT", "ANTIDB", "ADVDM", "METACLOAK"])
 
 config_path = os.path.abspath("configs/protection.yaml")
 config = load_config(config_path)
-device = device[-1]
+device = "".join(filter(str.isdigit, device))
 os.makedirs(output_dir, exist_ok=True)
 input_dir = glob(f"{input_dir}/*")
 for key in config[method]:

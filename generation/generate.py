@@ -37,7 +37,7 @@ assert purification in set(["naive", "gridpure", ""])
 
 config_path = os.path.abspath(f"configs/generation.yaml")
 config = load_config(config_path)
-device = device[-1]
+device = "".join(filter(str.isdigit, device))
 instance_dir = glob(f"{input_dir}/*")
 dir_suffix = config[method]["dir_suffix"]
 for each in instance_dir:
