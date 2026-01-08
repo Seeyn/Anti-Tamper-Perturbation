@@ -1,7 +1,8 @@
 import torch.nn as nn
-from networks.encoder import Encoder
-from networks.decoder import Decoder
+
 from networks.DCTlayer import *
+from networks.decoder import Decoder
+from networks.encoder import Encoder
 
 
 class EncoderDecoder(nn.Module):

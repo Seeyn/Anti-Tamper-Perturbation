@@ -5,15 +5,12 @@
 # This file is part of the MetaCloak project. Please cite our paper if our codebase contribute to your project.
 # -----------------------------------------------------------------------
 
-import random
-import wandb
-import argparse
 import copy
 import hashlib
 import itertools
 import logging
-import os
 from pathlib import Path
+
 import datasets
 import diffusers
 import numpy as np
@@ -21,6 +18,7 @@ import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
 import transformers
+import yaml
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import set_seed
@@ -30,22 +28,21 @@ from diffusers import (
     DiffusionPipeline,
     UNet2DConditionModel,
 )
-from diffusers.utils.import_utils import is_xformers_available
 from PIL import Image
-from torch.utils.data import Dataset
 from torchvision import transforms
 from tqdm import tqdm
-from transformers import AutoTokenizer, PretrainedConfig
-from robust_facecloak.model.db_train import DreamBoothDatasetFromTensor
-from robust_facecloak.model.db_train import import_model_class_from_model_name_or_path
+from transformers import AutoTokenizer
+
 from robust_facecloak.generic.data_utils import PromptDataset, load_data
 from robust_facecloak.generic.share_args import share_parse_args
-import yaml
+from robust_facecloak.model.db_train import (
+    DreamBoothDatasetFromTensor,
+    import_model_class_from_model_name_or_path,
+)
 
 logger = get_logger(__name__)
 
 import torch
-import torch.nn.functional as F
 
 
 def train_few_step(
@@ -529,8 +526,8 @@ def main(args):
     )  # remove EOT sampling for fast convergence. ATP don't need this for improving robustness.
     all_trans = transforms.Compose(all_trans)
 
-    from robust_facecloak.attacks.worker.robust_pgd_worker import RobustPGDAttacker
     from robust_facecloak.attacks.worker.pgd_worker import PGDAttacker
+    from robust_facecloak.attacks.worker.robust_pgd_worker import RobustPGDAttacker
 
     attacker = PGDAttacker(
         radius=args.attack_pgd_radius,

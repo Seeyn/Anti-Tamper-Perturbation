@@ -1,10 +1,11 @@
-from deepface import DeepFace
-import numpy as np
+import argparse
 import os
+
+import numpy as np
 import torch
 import torch.nn.functional as F
-import argparse
 from compute_idx_emb import compute_idx_embedding
+from deepface import DeepFace
 
 
 def compute_face_embedding(img_path):

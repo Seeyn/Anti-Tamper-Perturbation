@@ -1,17 +1,14 @@
-from ImageDataset import ImageDataset
-from torch.utils.data import DataLoader
-from ImageDataset2 import ImageDataset2, ImageDataset_Inf, ImageDataset3
 from ImageDataset import (
+    ImageDataset_ava,
+    ImageDataset_PIPAL,
     ImageDataset_SPAQ,
     ImageDataset_TID,
-    ImageDataset_PIPAL,
-    ImageDataset_ava,
 )
-
-from torchvision.transforms import Compose, ToTensor, Normalize, RandomHorizontalFlip
-from torchvision import transforms
-
+from ImageDataset2 import ImageDataset2, ImageDataset3, ImageDataset_Inf
 from PIL import Image
+from torch.utils.data import DataLoader
+from torchvision import transforms
+from torchvision.transforms import Compose, Normalize, RandomHorizontalFlip, ToTensor
 
 try:
     from torchvision.transforms import InterpolationMode

@@ -3,21 +3,22 @@ import copy
 import hashlib
 import itertools
 import logging
-import os
 import sys
 from pathlib import Path
 
 # Add project root to sys.path to import logger
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
-from logger import logger as loguru_logger
 
 import datasets
 import diffusers
+
+# from scipy.fftpack import dct, idct
 import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
 import transformers
+import yaml
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import set_seed
@@ -30,16 +31,11 @@ from diffusers import (
 from diffusers.utils.import_utils import is_xformers_available
 from PIL import Image
 from torch.utils.data import Dataset
+from torch_dct import dct as tdct
+from torch_dct import idct as tidct
 from torchvision import transforms
 from tqdm.auto import tqdm
 from transformers import AutoTokenizer, PretrainedConfig
-import argparse
-from torch_dct import dct as tdct
-from torch_dct import idct as tidct
-
-# from scipy.fftpack import dct, idct
-import numpy as np
-import yaml
 
 
 logger = get_logger(__name__)

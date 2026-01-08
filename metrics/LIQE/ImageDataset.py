@@ -1,7 +1,8 @@
-import os
-import torch
 import functools
+import os
+
 import numpy as np
+import torch
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 

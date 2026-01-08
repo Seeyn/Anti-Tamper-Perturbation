@@ -1,18 +1,16 @@
-import os
-from pathlib import Path
-import time
-import torch
-import numpy as np
-import utils
-import logging
-from networks.HIDNet import HIDNet
-from dataset import *
-import sys
-import re
-from tqdm import tqdm
-import yaml
 import argparse
+import re
+import sys
+from pathlib import Path
+
 import cv2
+import numpy as np
+import torch
+import utils
+import yaml
+from dataset import *
+from networks.HIDNet import HIDNet
+from tqdm import tqdm
 
 # Add project root to sys.path to import logger
 sys.path.append(str(Path(__file__).resolve().parent.parent))

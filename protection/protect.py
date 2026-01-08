@@ -1,10 +1,10 @@
+import argparse
+import os
 import subprocess
 import sys
-from glob import glob
-import os
 from pathlib import Path
+
 import yaml
-import argparse
 
 # Add project root to sys.path to import logger
 sys.path.append(str(Path(__file__).resolve().parent.parent))

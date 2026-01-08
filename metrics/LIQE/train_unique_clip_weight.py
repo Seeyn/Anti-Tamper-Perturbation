@@ -1,24 +1,23 @@
-import torch
-import torch.nn as nn
+import os
+import pickle
+import random
+import time
+from itertools import product
+
+import clip
 import numpy as np
+import scipy.stats
+import torch
+import torch.nn.functional as F
+from MNL_Loss import (
+    Fidelity_Loss_distortion,
+    Multi_Fidelity_Loss,
+    loss_m4,
+)
 
 # from torch.utils.data import DataLoader
 from torch.optim import lr_scheduler
-import clip
-import random
-import time
-from MNL_Loss import (
-    Fidelity_Loss,
-    loss_m4,
-    Multi_Fidelity_Loss,
-    Fidelity_Loss_distortion,
-)
-import scipy.stats
-from utils import set_dataset, _preprocess2, _preprocess3, convert_models_to_fp32
-import torch.nn.functional as F
-from itertools import product
-import os
-import pickle
+from utils import _preprocess2, _preprocess3, convert_models_to_fp32, set_dataset
 from weight_methods import WeightMethods
 
 ##############################textual template####################################

@@ -15,29 +15,21 @@
 
 # Modified by Yixin Liu, Lehigh University 2023, with some changes in adversarial attack and defense settings
 
-import requests
-
-# from PIL import Image
-from io import BytesIO
-from diffusers import StableDiffusionUpscalePipeline
-import torch
-from generic.tools import upload_py_code
-from PIL import Image
-
-# from PIL import Image
-import numpy as np
-import argparse
 import hashlib
 import itertools
 import logging
 import math
 import os
-import warnings
+
+# from PIL import Image
 from pathlib import Path
 from typing import Optional
-from robust_facecloak.generic.tools import config_and_condition_checking
+
 import datasets
 import diffusers
+
+# from PIL import Image
+import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
@@ -50,20 +42,23 @@ from diffusers import (
     DDPMScheduler,
     DiffusionPipeline,
     StableDiffusionPipeline,
+    StableDiffusionUpscalePipeline,
     UNet2DConditionModel,
 )
 from diffusers.optimization import get_scheduler
 from diffusers.utils import check_min_version
 from diffusers.utils.import_utils import is_xformers_available
 from huggingface_hub import HfFolder, create_repo, whoami
+from PIL import Image
 
 # from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
 from tqdm.auto import tqdm
 from transformers import AutoTokenizer, PretrainedConfig
-from robust_facecloak.generic.data_utils import jpeg_compress_image
 
+from robust_facecloak.generic.data_utils import jpeg_compress_image
+from robust_facecloak.generic.tools import config_and_condition_checking
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.13.0.dev0")
@@ -95,7 +90,7 @@ def import_model_class_from_model_name_or_path(
         raise ValueError(f"{model_class} is not supported.")
 
 
-from robust_facecloak.generic.share_args import share_parse_args, add_train_db
+from robust_facecloak.generic.share_args import add_train_db, share_parse_args
 
 
 def parse_args(input_args=None):

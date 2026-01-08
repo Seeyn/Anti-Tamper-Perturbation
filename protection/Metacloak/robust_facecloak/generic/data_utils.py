@@ -1,9 +1,8 @@
-from torch.utils.data import Dataset
-from torchvision import transforms
-from PIL import Image
-import torch
-import os
 from pathlib import Path
+
+import torch
+from PIL import Image
+from torch.utils.data import Dataset
 
 
 class PromptDataset(Dataset):
@@ -34,7 +33,7 @@ def load_data(
     # more robust loading to avoid loaing non-image files
     images = []
     for i in list(Path(data_dir).iterdir()):
-        if not i.suffix in [".jpg", ".png", ".jpeg"]:
+        if i.suffix not in [".jpg", ".png", ".jpeg"]:
             continue
         else:
             images.append(image_to_numpy(Image.open(i).convert("RGB")))
@@ -48,8 +47,8 @@ def load_data(
     return images
 
 
-from PIL import Image
 from io import BytesIO
+
 
 
 def jpeg_compress_image(image: Image.Image, quality: int = 85) -> Image.Image:

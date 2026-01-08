@@ -11,7 +11,6 @@ import os
 import torch
 from diffusers import StableDiffusionPipeline
 
-
 parser = argparse.ArgumentParser(description="Inference")
 parser.add_argument(
     "--model_path",

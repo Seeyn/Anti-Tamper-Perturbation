@@ -1,6 +1,7 @@
-import torch
-import numpy as np
 import random
+
+import numpy as np
+import torch
 
 
 def set_seed(seed):
@@ -26,7 +27,6 @@ def set_seed(seed):
 
 
 import cv2
-import torch
 import degradations as degradations
 from torchvision.transforms.functional import normalize
 

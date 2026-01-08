@@ -1,18 +1,16 @@
 import argparse
 import hashlib
-import itertools
 import json
 import logging
 import os
 import random
-import warnings
 import sys
+import warnings
 from pathlib import Path
 
 # Add project root to sys.path to import logger
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
-from logger import logger as loguru_logger
-
+import diffusers
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -21,14 +19,6 @@ import transformers
 from accelerate import Accelerator
 from accelerate.logging import get_logger
 from accelerate.utils import ProjectConfiguration, set_seed
-from packaging import version
-from PIL import Image
-from torch.utils.data import Dataset
-from torchvision import transforms
-from tqdm.auto import tqdm
-from transformers import AutoTokenizer, PretrainedConfig
-
-import diffusers
 from diffusers import (
     AutoencoderKL,
     DDPMScheduler,
@@ -42,6 +32,12 @@ from diffusers.models.attention_processor import (
 )
 from diffusers.optimization import get_scheduler
 from diffusers.utils.import_utils import is_xformers_available
+from packaging import version
+from PIL import Image
+from torch.utils.data import Dataset
+from torchvision import transforms
+from tqdm.auto import tqdm
+from transformers import AutoTokenizer, PretrainedConfig
 
 
 logger = get_logger(__name__)

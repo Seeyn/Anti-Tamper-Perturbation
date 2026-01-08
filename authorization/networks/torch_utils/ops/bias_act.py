@@ -9,14 +9,14 @@
 """Custom PyTorch ops for efficient bias and activation."""
 
 import os
+import traceback
 import warnings
+
+import dnnlib
 import numpy as np
 import torch
-import dnnlib
-import traceback
 
-from .. import custom_ops
-from .. import misc
+from .. import custom_ops, misc
 
 # ----------------------------------------------------------------------------
 

@@ -1,14 +1,16 @@
-import pickle
-import numpy as np
 import argparse
+import pickle
 import sys
 from pathlib import Path
 
+import numpy as np
+
 # Add project root to sys.path to import logger
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-from logger import logger
-from rich.table import Table
 from rich.console import Console
+from rich.table import Table
+
+from logger import logger
 
 
 def get_args():

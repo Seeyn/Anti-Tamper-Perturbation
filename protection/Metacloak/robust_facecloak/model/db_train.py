@@ -5,17 +5,15 @@
 # This file is part of the MetaCloak project. Please cite our paper if our codebase contribute to your project.
 # -----------------------------------------------------------------------
 
-import torch
-import torch.nn.functional as F
-import copy
 import itertools
 from pathlib import Path
+
+import torch
+import torch.nn.functional as F
 from PIL import Image
-from torchvision import transforms
 from torch.utils.data import Dataset
-
-
-from transformers import AutoTokenizer, PretrainedConfig
+from torchvision import transforms
+from transformers import PretrainedConfig
 
 
 def import_model_class_from_model_name_or_path(

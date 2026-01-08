@@ -2,20 +2,21 @@
 
 # common dependencies
 import os
-from pathlib import Path
-import warnings
-import time
 import pickle
-import logging
+import time
+import warnings
+from pathlib import Path
+
+import cv2
 
 # 3rd party dependencies
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-import cv2
+from deepface.commons import distance as dst
 
 # package dependencies
-from deepface.commons import functions, realtime, distance as dst
+from deepface.commons import functions, realtime
+from tqdm import tqdm
 
 # -----------------------------------
 # configurations for dependencies
@@ -41,22 +42,22 @@ def build_model(model_name):
     # singleton design pattern
     global model_obj
 
-    if not "model_obj" in globals():
+    if "model_obj" not in globals():
         model_obj = {}
 
-    if not model_name in model_obj:
+    if model_name not in model_obj:
         from deepface.basemodels import (
-            VGGFace,
-            OpenFace,
+            ArcFace,
+            DeepID,
+            DlibWrapper,
             Facenet,
             Facenet512,
             FbDeepFace,
-            DeepID,
-            DlibWrapper,
-            ArcFace,
+            OpenFace,
             SFace,
+            VGGFace,
         )
-        from deepface.extendedmodels import Age, Gender, Race, Emotion
+        from deepface.extendedmodels import Age, Emotion, Gender, Race
 
         models = {
             "VGG-Face": VGGFace.loadModel,

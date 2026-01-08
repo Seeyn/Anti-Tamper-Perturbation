@@ -1,43 +1,34 @@
 # Adapted from https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/train_dreambooth.py
 
 import argparse
-import math
 import copy
-import cv2
+import os
 from pathlib import Path
-from torch.autograd import Variable
-import accelerate
+
+import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.utils.checkpoint
-import transformers
 from accelerate import Accelerator
 from accelerate.utils import ProjectConfiguration, set_seed
-from packaging import version
-from PIL import Image
-from torch.utils.data import Dataset
-from torchvision import transforms
-from tqdm.auto import tqdm
-from transformers import AutoTokenizer, PretrainedConfig
-import os
-import torch.nn as nn
-from torchvision.transforms.transforms import Resize
-import random
-import torchvision
-import diffusers
 from diffusers import (
     AutoencoderKL,
     DDPMScheduler,
-    DiffusionPipeline,
     UNet2DConditionModel,
 )
 from diffusers.utils import check_min_version, is_wandb_available
+from PIL import Image
+from torch.autograd import Variable
+from torch.utils.data import Dataset
 from torch_dct import dct as tdct
 from torch_dct import idct as tidct
+from torchvision import transforms
+from tqdm.auto import tqdm
+from transformers import AutoTokenizer, PretrainedConfig
 
 if is_wandb_available():
-    import wandb
+    pass
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
 check_min_version("0.15.0.dev0")

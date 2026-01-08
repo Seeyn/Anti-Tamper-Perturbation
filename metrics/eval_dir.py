@@ -3,8 +3,8 @@ from PIL import Image, ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 import numpy as np
 import torch
-from piq import CLIPIQA
 from brisque import BRISQUE
+from piq import CLIPIQA
 
 obj = BRISQUE(url=False)
 clipiqa = CLIPIQA()
@@ -17,17 +17,16 @@ lieq_model = LIQE(ckpt, device="cuda" if torch.cuda.is_available() else "cpu")
 import clip
 
 clip_model, clip_preprocess = clip.load("ViT-B/32")
-import glob
-import os
-from pathlib import Path
-from ism_fdfr import matching_score_id
-from tqdm import tqdm
-from torchvision.transforms import ToTensor
-import torch
-from torchvision import transforms
-import pickle
 import argparse
+import pickle
+from pathlib import Path
+
+import torch
 import yaml
+from ism_fdfr import matching_score_id
+from torchvision import transforms
+from torchvision.transforms import ToTensor
+from tqdm import tqdm
 
 
 def get_args():

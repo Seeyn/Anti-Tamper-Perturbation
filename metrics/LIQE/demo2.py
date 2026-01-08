@@ -1,6 +1,7 @@
-import torch
-import numpy as np
 import random
+
+import numpy as np
+import torch
 from PIL import Image, ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True

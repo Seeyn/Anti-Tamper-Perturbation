@@ -1,11 +1,12 @@
-import torch
-import numpy as np
-import clip
-from utils import _preprocess2
 import random
 from itertools import product
-from PIL import Image, ImageFile
+
+import clip
+import numpy as np
+import torch
 import torch.nn.functional as F
+from PIL import Image, ImageFile
+from utils import _preprocess2
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 

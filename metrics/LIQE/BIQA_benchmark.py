@@ -1,13 +1,14 @@
-import torch
-import numpy as np
+import os
 
 # from torch.utils.data import DataLoader
 import random
-from utils import set_dataset, _preprocess2
-import torch.nn.functional as F
 from itertools import product
-import os
+
+import numpy as np
+import torch
+import torch.nn.functional as F
 from scipy.optimize import curve_fit
+from utils import _preprocess2, set_dataset
 
 preprocess2 = _preprocess2()
 

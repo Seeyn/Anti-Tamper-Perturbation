@@ -5,13 +5,13 @@
 # This file is part of the MetaCloak project. Please cite our paper if our codebase contribute to your project.
 # -----------------------------------------------------------------------
 
-from typing import Any
+
 from PIL import Image, ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-from LIQE.LIQE import LIQE
 import numpy as np
 import torch
+from LIQE.LIQE import LIQE
 
 # Delay loading heavy libraries
 clipiqa = None
@@ -56,10 +56,12 @@ def get_liqe():
     return lieq_model
 
 
-from robust_facecloak.generic.modi_deepface import find_without_savepkl
-from deepface import DeepFace
 import glob
 import os
+
+from deepface import DeepFace
+
+from robust_facecloak.generic.modi_deepface import find_without_savepkl
 
 
 def loop_to_get_overall_score(
@@ -373,7 +375,7 @@ def get_score(
     )
 
     if type_name == "face":
-        result_dict[f"IMS_VGG-Face_cosine"] = IMS_Face_Scorer(
+        result_dict["IMS_VGG-Face_cosine"] = IMS_Face_Scorer(
             gen_image_dir=image_dir, clean_ref_db=clean_ref_dir, type_name=type_name
         )
 

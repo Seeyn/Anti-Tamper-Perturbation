@@ -1,8 +1,8 @@
-import numpy as np
-import os
-from deepface import DeepFace
 import argparse
+import os
 
+import numpy as np
+from deepface import DeepFace
 
 # def compute_idx_embedding(path):
 #     """

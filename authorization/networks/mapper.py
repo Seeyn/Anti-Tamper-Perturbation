@@ -1,7 +1,8 @@
-import torch
 import numpy as np
-from networks.torch_utils.ops import bias_act
+import torch
+
 from networks.torch_utils import misc
+from networks.torch_utils.ops import bias_act
 
 
 class FullyConnectedLayer(torch.nn.Module):
