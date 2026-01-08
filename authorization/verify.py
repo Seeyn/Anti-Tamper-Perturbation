@@ -14,6 +14,10 @@ import yaml
 import argparse
 import cv2
 
+# Add project root to sys.path to import logger
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from logger import logger
+
 
 def sorted_nicely(l):
     """Sort the given iterable in the way that humans expect."""
@@ -85,17 +89,13 @@ def get_args():
 
 config = load_config("configs/verification.yaml")
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
+# setup_logger() is already called in logger.py import
 
 seed = config["seed"]
 utils.set_seed(seed)
 message_length = config["message_length"]
-print("seed:", seed)
-print("message_length:", message_length)
+logger.info(f"seed: [bold cyan]{seed}[/bold cyan]")
+logger.info(f"message_length: [bold cyan]{message_length}[/bold cyan]")
 
 args = get_args()
 input_dir = args.input_dir
@@ -135,8 +135,8 @@ transform = transforms.Compose(
 )
 
 test_set = message_dir
-print("noise_type", noise_type)
-print("noise_args", noise_args)
+logger.info(f"noise_type: [bold cyan]{noise_type}[/bold cyan]")
+logger.info(f"noise_args: [bold cyan]{noise_args}[/bold cyan]")
 bit_error_threshold = 3 / 32
 
 if noise_type is not None:
@@ -183,11 +183,8 @@ for each in id_set:
     if id_set[each] == 0:
         Pass_num += 1
 
-print(
-    "Average Bit-Error:",
-    np.array(bitwise_avg_err).mean(),
-    " / Unauthorized image Ratio:",
-    unauthorized_image_num / len(paths),
-    " / Pass Verification Identity Num:",
-    Pass_num,
+logger.info(
+    f"Average Bit-Error: [bold yellow]{np.array(bitwise_avg_err).mean():.4f}[/bold yellow] / "
+    f"Unauthorized image Ratio: [bold red]{unauthorized_image_num / len(paths):.4f}[/bold red] / "
+    f"Pass Verification Identity Num: [bold green]{Pass_num}[/bold green]"
 )

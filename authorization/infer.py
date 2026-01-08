@@ -12,6 +12,10 @@ import re
 from tqdm import tqdm
 import yaml
 
+# Add project root to sys.path to import logger
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from logger import logger
+
 
 def sorted_nicely(l):
     """Sort the given iterable in the way that humans expect."""
@@ -44,11 +48,7 @@ def load_config(config_file):
 
 config = load_config("configs/authorization.yaml")
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-    handlers=[logging.StreamHandler(sys.stdout)],
-)
+# setup_logger() is already called in logger.py import
 
 seed = config["seed"]
 utils.set_seed(seed)
@@ -61,11 +61,11 @@ gamma = args.gamma
 input_mask = args.input_mask
 pixel_space = args.pixel_space
 
-print("seed:", seed)
-print("message_length:", message_length)
-print("block_size", config["block_size"])
-print("input_folder:", input_dir)
-print("running_folder:", output_dir)
+logger.info(f"seed: [bold cyan]{seed}[/bold cyan]")
+logger.info(f"message_length: [bold cyan]{message_length}[/bold cyan]")
+logger.info(f"block_size: [bold cyan]{config['block_size']}[/bold cyan]")
+logger.info(f"input_folder: [bold cyan]{input_dir}[/bold cyan]")
+logger.info(f"running_folder: [bold cyan]{output_dir}[/bold cyan]")
 
 model = HIDNet(device, gamma=gamma, input_mask=input_mask, pixel_space=pixel_space)
 val_dataloader = torch.utils.data.DataLoader(

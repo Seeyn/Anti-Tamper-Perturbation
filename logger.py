@@ -1,0 +1,59 @@
+import sys
+import logging
+from loguru import logger
+from rich.logging import RichHandler
+from rich.console import Console
+from rich.traceback import install
+
+# Install rich traceback for better error visualization
+install(show_locals=True)
+
+
+class InterceptHandler(logging.Handler):
+    def emit(self, record):
+        # Get corresponding Loguru level if it exists
+        try:
+            level = logger.level(record.levelname).name
+        except ValueError:
+            level = record.levelno
+
+        # Find caller from where originated the logged message
+        frame, depth = logging.currentframe(), 2
+        while frame.f_code.co_filename == logging.__file__:
+            frame = frame.f_back
+            depth += 1
+
+        logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
+
+
+def setup_logger(level="INFO"):
+    # Remove default handler
+    logger.remove()
+
+    # Add Rich handler
+    logger.add(
+        RichHandler(
+            console=Console(width=150),
+            show_path=False,
+            enable_link_path=False,
+            rich_tracebacks=True,
+            markup=True,
+        ),
+        format="{message}",
+        level=level,
+    )
+
+    # Intercept standard logging
+    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+
+    # Suppress chatty libraries
+    for name in ["huggingface_hub", "transformers", "diffusers", "accelerate", "PIL"]:
+        logging.getLogger(name).setLevel(logging.WARNING)
+
+
+setup_logger()
+
+# Export logger
+__all__ = ["logger", "setup_logger"]

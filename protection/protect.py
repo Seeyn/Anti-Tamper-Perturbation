@@ -6,6 +6,10 @@ from pathlib import Path
 import yaml
 import argparse
 
+# Add project root to sys.path to import logger
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from logger import logger
+
 
 def get_args():
     parent_parser = argparse.ArgumentParser()
@@ -52,14 +56,14 @@ Path(output_dir).mkdir(parents=True, exist_ok=True)
 input_paths = list(Path(input_dir).iterdir())
 
 for key in config[method]:
-    print(key, config[method][key])
+    logger.info(f"{key}: [bold cyan]{config[method][key]}[/bold cyan]")
 
 try:
     for each in input_paths:
         i_name = each.name
         if ".pt" in i_name:
             continue
-        print(f"Processing: {i_name}")
+        logger.info(f"Processing: [bold green]{i_name}[/bold green]")
 
         env = os.environ.copy()
         env["CUDA_VISIBLE_DEVICES"] = device_id
@@ -105,11 +109,11 @@ try:
             subprocess.run(cmd, env=env, check=True)
 
 except KeyboardInterrupt:
-    print("\n[!] 收到中断信号，正在停止当前任务...")
+    logger.warning("收到中断信号，正在停止当前任务...")
     sys.exit(130)
 except subprocess.CalledProcessError as e:
-    print(f"\n[!] 任务执行失败: {e}")
+    logger.error(f"任务执行失败: {e}")
     sys.exit(1)
 except Exception as e:
-    print(f"\n[!] 发生错误: {e}")
+    logger.exception(f"发生错误: {e}")
     sys.exit(1)

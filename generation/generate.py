@@ -6,6 +6,10 @@ from pathlib import Path
 import argparse
 import yaml
 
+# Add project root to sys.path to import logger
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from logger import logger
+
 
 def get_args():
     parent_parser = argparse.ArgumentParser()
@@ -49,7 +53,7 @@ try:
         i_name = each.name
         if ".pt" in i_name:
             continue
-        print(f"Processing: {i_name}")
+        logger.info(f"Processing: [bold green]{i_name}[/bold green]")
         train_dir = Path(input_dir) / i_name / dir_suffix
 
         env = os.environ.copy()
@@ -67,11 +71,11 @@ try:
         subprocess.run(["bash", script, str(train_dir)], env=env, check=True)
 
 except KeyboardInterrupt:
-    print("\n[!] 收到中断信号，正在停止当前任务...")
+    logger.warning("收到中断信号，正在停止当前任务...")
     sys.exit(130)
 except subprocess.CalledProcessError as e:
-    print(f"\n[!] 脚本执行失败: {e}")
+    logger.error(f"脚本执行失败: {e}")
     sys.exit(1)
 except Exception as e:
-    print(f"\n[!] 发生错误: {e}")
+    logger.exception(f"发生错误: {e}")
     sys.exit(1)

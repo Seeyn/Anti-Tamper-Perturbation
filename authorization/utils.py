@@ -7,6 +7,11 @@ from networks import HIDNet
 import logging
 import os
 from pathlib import Path
+import sys
+
+# Add project root to sys.path to import logger
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from logger import logger
 
 
 def set_seed(seed):
@@ -78,7 +83,7 @@ def save_checkpoint(
 
     checkpoint_filename = f"{experiment_name}--epoch-{epoch}.pyt"
     checkpoint_file_path = checkpoint_folder_path / checkpoint_filename
-    logging.info(f"Saving checkpoint to {checkpoint_file_path}")
+    logger.info(f"Saving checkpoint to [bold cyan]{checkpoint_file_path}[/bold cyan]")
     checkpoint = {
         "enc-dec-model": model.encoder_decoder.state_dict(),
         "enc-dec-optim": model.optimizer_enc_dec.state_dict(),
@@ -88,7 +93,7 @@ def save_checkpoint(
         "epoch": epoch,
     }
     torch.save(checkpoint, checkpoint_file_path)
-    logging.info("Saving checkpoint done.")
+    logger.info("Saving checkpoint done.")
 
 
 def get_phis(phi_dimension, batch_size, eps=1e-8):

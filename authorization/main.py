@@ -12,14 +12,12 @@ import sys
 from tqdm import tqdm
 import yaml
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-    handlers=[
-        # logging.FileHandler(os.path.join(this_run_folder, f'{train_options.experiment_name}.log')),
-        logging.StreamHandler(sys.stdout)
-    ],
-)
+# Add project root to sys.path to import logger
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from logger import logger
+
+# setup_logger() is already called in logger.py import
+
 utils.set_seed(1042)
 
 
@@ -83,8 +81,8 @@ global_step = 0
 val_step = 0
 
 for _ in range(epoch_num):
-    logging.info("Epoch Num: {}".format(_))
-    for batch_id, image in tqdm(enumerate(train_dataloader)):
+    logger.info(f"[bold yellow]Epoch Num: {_}[/bold yellow]")
+    for batch_id, image in tqdm(enumerate(train_dataloader), desc=f"Epoch {_}"):
         global_step += 1
         image = image.to(device)
         message = utils.get_phis(

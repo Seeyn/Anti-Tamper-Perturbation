@@ -6,7 +6,12 @@ import logging
 import os
 import random
 import warnings
+import sys
 from pathlib import Path
+
+# Add project root to sys.path to import logger
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+from logger import logger as loguru_logger
 
 import numpy as np
 import torch

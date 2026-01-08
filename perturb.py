@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 import yaml
 import argparse
+from logger import logger
 
 
 def get_args():
@@ -50,7 +51,7 @@ method = args.method
 
 
 try:
-    print("###Authorization Start###")
+    logger.info("[bold blue]### Authorization Start ###[/bold blue]")
     subprocess.run(
         [
             sys.executable,
@@ -64,12 +65,12 @@ try:
         ],
         check=True,
     )
-    print("Output at: %s" % output_dir)
-    print("###Authorization End###")
+    logger.info(f"Output at: [green]{output_dir}[/green]")
+    logger.info("[bold blue]### Authorization End ###[/bold blue]")
 
-    print()
+    logger.info("")
 
-    print("###Protection Start###")
+    logger.info("[bold magenta]### Protection Start ###[/bold magenta]")
     subprocess.run(
         [
             sys.executable,
@@ -85,10 +86,10 @@ try:
         ],
         check=True,
     )
-    print("###Protection End###")
+    logger.info("[bold magenta]### Protection End ###[/bold magenta]")
 except KeyboardInterrupt:
-    print("\n[!] 收到中断信号，正在退出...")
+    logger.warning("收到中断信号，正在退出...")
     sys.exit(130)
 except subprocess.CalledProcessError as e:
-    print(f"\n[!] 执行出错: {e}")
+    logger.error(f"执行出错: {e}")
     sys.exit(1)
