@@ -10,18 +10,52 @@ from PIL import Image, ImageFile
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 from LIQE.LIQE import LIQE
-import tensorflow as tf
 import numpy as np
 import torch
-from piq import CLIPIQA, BRISQUELoss
 
-clipiqa = CLIPIQA()
-brisque = BRISQUELoss()
-ckpt = "../LIQE/checkpoints/LIQE.pt"
-import clip
+# Delay loading heavy libraries
+clipiqa = None
+brisque = None
+clip_model = None
+clip_preprocess = None
+lieq_model = None
 
-clip_model, clip_preprocess = clip.load("ViT-B/32")
-lieq_model = LIQE(ckpt, device="cuda" if torch.cuda.is_available() else "cpu")
+
+def get_clipiqa():
+    global clipiqa
+    if clipiqa is None:
+        from piq import CLIPIQA
+
+        clipiqa = CLIPIQA()
+    return clipiqa
+
+
+def get_brisque():
+    global brisque
+    if brisque is None:
+        from piq import BRISQUELoss
+
+        brisque = BRISQUELoss()
+    return brisque
+
+
+def get_clip():
+    global clip_model, clip_preprocess
+    if clip_model is None:
+        import clip
+
+        clip_model, clip_preprocess = clip.load("ViT-B/32")
+    return clip_model, clip_preprocess
+
+
+def get_liqe():
+    global lieq_model
+    if lieq_model is None:
+        ckpt = "../LIQE/checkpoints/LIQE.pt"
+        lieq_model = LIQE(ckpt, device="cuda" if torch.cuda.is_available() else "cpu")
+    return lieq_model
+
+
 from robust_facecloak.generic.modi_deepface import find_without_savepkl
 from deepface import DeepFace
 import glob
@@ -89,7 +123,7 @@ def BRISQUE_get_score(gen_i, clean_ref_db=None, type_name="face"):
 
     trans = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor()])
     with torch.no_grad():
-        score = brisque(trans(PIL_image).unsqueeze(0)).item()
+        score = get_brisque()(trans(PIL_image).unsqueeze(0)).item()
     return score
 
 
@@ -104,7 +138,7 @@ def CLIPIQA_get_score(gen_i, clean_ref_db=None, type_name="face"):
 
     trans = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
     with torch.no_grad():
-        score = clipiqa(trans(PIL_image).unsqueeze(0)).item()
+        score = get_clipiqa()(trans(PIL_image).unsqueeze(0)).item()
     return score
 
 
@@ -116,7 +150,7 @@ def LIQE_get_quality_score(gen_i, clean_ref_db=None, type_name="face"):
     from torchvision.transforms import ToTensor
 
     img = ToTensor()(img).unsqueeze(0)
-    q1, s1, d1 = lieq_model(img)
+    q1, s1, d1 = get_liqe()(img)
     return q1.item()
 
 
@@ -128,7 +162,7 @@ def LIQE_get_scene_human_score(gen_i, clean_ref_db=None, type_name="face"):
     from torchvision.transforms import ToTensor
 
     img = ToTensor()(img).unsqueeze(0)
-    q1, s1, d1 = lieq_model(img)
+    q1, s1, d1 = get_liqe()(img)
     return 1 if s1 == "human" else 0
 
 
@@ -141,6 +175,7 @@ def IMS_CLIP_get_score(gen_i, clean_ref_db, type_name="face"):
     import torch
 
     img = Image.open(gen_i).convert("RGB")
+    clip_model, clip_preprocess = get_clip()
     image = clip_preprocess(img).unsqueeze(0).to("cuda")
     with torch.no_grad():
         image_features = clip_model.encode_image(image)
@@ -180,7 +215,10 @@ def CLIP_Face_get_score(gen_i, clean_ref_db=None, type_name="face"):
     import torch
 
     gen_img = Image.open(gen_i).convert("RGB")
+    clip_model, clip_preprocess = get_clip()
     image = clip_preprocess(gen_img).unsqueeze(0).to("cuda")
+    import clip
+
     text = clip.tokenize(["good face", "bad face"]).to("cuda")
     similarity_matrix = None
     with torch.no_grad():
@@ -199,7 +237,10 @@ def CLIP_IQAC_get_score(gen_i, clean_ref_db=None, type_name="face"):
     import torch
 
     gen_img = Image.open(gen_i).convert("RGB")
+    clip_model, clip_preprocess = get_clip()
     image = clip_preprocess(gen_img).unsqueeze(0).to("cuda")
+    import clip
+
     text = clip.tokenize(
         ["a good photo of " + type_name, "a bad photo of " + type_name]
     ).to("cuda")
@@ -222,7 +263,10 @@ def CLIP_zero_short_classification_get_score(
     import torch
 
     gen_img = Image.open(gen_i).convert("RGB")
+    clip_model, clip_preprocess = get_clip()
     image = clip_preprocess(gen_img).unsqueeze(0).to("cuda")
+    import clip
+
     text = clip.tokenize(
         ["a picture of " + type_name, "a picture of non-" + type_name]
     ).to("cuda")

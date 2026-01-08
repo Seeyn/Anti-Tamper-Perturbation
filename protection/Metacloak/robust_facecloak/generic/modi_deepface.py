@@ -13,21 +13,8 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 import cv2
-import tensorflow as tf
 
 # package dependencies
-from deepface.basemodels import (
-    VGGFace,
-    OpenFace,
-    Facenet,
-    Facenet512,
-    FbDeepFace,
-    DeepID,
-    DlibWrapper,
-    ArcFace,
-    SFace,
-)
-from deepface.extendedmodels import Age, Gender, Race, Emotion
 from deepface.commons import functions, realtime, distance as dst
 
 # -----------------------------------
@@ -35,9 +22,7 @@ from deepface.commons import functions, realtime, distance as dst
 
 warnings.filterwarnings("ignore")
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-tf_version = int(tf.__version__.split(".", maxsplit=1)[0])
-if tf_version == 2:
-    tf.get_logger().setLevel(logging.ERROR)
+
 # -----------------------------------
 
 
@@ -56,26 +41,38 @@ def build_model(model_name):
     # singleton design pattern
     global model_obj
 
-    models = {
-        "VGG-Face": VGGFace.loadModel,
-        "OpenFace": OpenFace.loadModel,
-        "Facenet": Facenet.loadModel,
-        "Facenet512": Facenet512.loadModel,
-        "DeepFace": FbDeepFace.loadModel,
-        "DeepID": DeepID.loadModel,
-        "Dlib": DlibWrapper.loadModel,
-        "ArcFace": ArcFace.loadModel,
-        "SFace": SFace.load_model,
-        "Emotion": Emotion.loadModel,
-        "Age": Age.loadModel,
-        "Gender": Gender.loadModel,
-        "Race": Race.loadModel,
-    }
-
     if not "model_obj" in globals():
         model_obj = {}
 
     if not model_name in model_obj:
+        from deepface.basemodels import (
+            VGGFace,
+            OpenFace,
+            Facenet,
+            Facenet512,
+            FbDeepFace,
+            DeepID,
+            DlibWrapper,
+            ArcFace,
+            SFace,
+        )
+        from deepface.extendedmodels import Age, Gender, Race, Emotion
+
+        models = {
+            "VGG-Face": VGGFace.loadModel,
+            "OpenFace": OpenFace.loadModel,
+            "Facenet": Facenet.loadModel,
+            "Facenet512": Facenet512.loadModel,
+            "DeepFace": FbDeepFace.loadModel,
+            "DeepID": DeepID.loadModel,
+            "Dlib": DlibWrapper.loadModel,
+            "ArcFace": ArcFace.loadModel,
+            "SFace": SFace.load_model,
+            "Emotion": Emotion.loadModel,
+            "Age": Age.loadModel,
+            "Gender": Gender.loadModel,
+            "Race": Race.loadModel,
+        }
         model = models.get(model_name)
         if model:
             model = model()
@@ -333,6 +330,8 @@ def analyze(
                 pbar.set_description(f"Action: {action}")
 
                 if action == "emotion":
+                    from deepface.extendedmodels import Emotion
+
                     img_gray = cv2.cvtColor(img_content[0], cv2.COLOR_BGR2GRAY)
                     img_gray = cv2.resize(img_gray, (48, 48))
                     img_gray = np.expand_dims(img_gray, axis=0)
@@ -356,6 +355,8 @@ def analyze(
                     ]
 
                 elif action == "age":
+                    from deepface.extendedmodels import Age
+
                     age_predictions = models["age"].predict(img_content, verbose=0)[
                         0, :
                     ]
@@ -364,6 +365,8 @@ def analyze(
                     obj["age"] = int(apparent_age)
 
                 elif action == "gender":
+                    from deepface.extendedmodels import Gender
+
                     gender_predictions = models["gender"].predict(
                         img_content, verbose=0
                     )[0, :]
@@ -377,6 +380,8 @@ def analyze(
                     ]
 
                 elif action == "race":
+                    from deepface.extendedmodels import Race
+
                     race_predictions = models["race"].predict(img_content, verbose=0)[
                         0, :
                     ]

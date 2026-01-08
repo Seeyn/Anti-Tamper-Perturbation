@@ -2,17 +2,85 @@ import torch
 import numpy as np
 
 # from torch.utils.data import DataLoader
-import clip
 import random
-import scipy.stats
 from utils import set_dataset, _preprocess2
 import torch.nn.functional as F
 from itertools import product
 import os
 from scipy.optimize import curve_fit
-from sklearn.metrics import mean_squared_error
 
 preprocess2 = _preprocess2()
+
+# Global variables for lazy loading
+_joint_texts = None
+
+
+def get_joint_texts(device):
+    global _joint_texts
+    if _joint_texts is None:
+        import clip
+
+        # These are used to generate the joint_texts
+        qualitys = ["bad", "poor", "fair", "good", "perfect"]
+        scenes = [
+            "animal",
+            "cityscape",
+            "human",
+            "indoor",
+            "landscape",
+            "night",
+            "plant",
+            "still_life",
+            "others",
+        ]
+        dists_map = [
+            "jpeg2000 compression",
+            "jpeg compression",
+            "noise",
+            "blur",
+            "color",
+            "contrast",
+            "overexposure",
+            "underexposure",
+            "spatial",
+            "quantization",
+            "other",
+        ]
+
+        _joint_texts = torch.cat(
+            [
+                clip.tokenize(
+                    f"a photo of a {c} with {d} artifacts, which is of {q} quality"
+                )
+                for q, c, d in product(qualitys, scenes, dists_map)
+            ]
+        ).to(device)
+
+        if mtl == 1:
+            _joint_texts = torch.cat(
+                [
+                    clip.tokenize(f"a photo of a {c}, which is of {q} quality")
+                    for q, c in product(qualitys, scenes)
+                ]
+            ).to(device)
+        elif mtl == 2:
+            _joint_texts = torch.cat(
+                [
+                    clip.tokenize(
+                        f"a photo with {d} artifacts, which is of {q} quality"
+                    )
+                    for q, d in product(qualitys, dists_map)
+                ]
+            ).to(device)
+
+    return _joint_texts
+
+
+def get_clip():
+    import clip
+
+    return clip
+
 
 dists = [
     "jpeg2000 compression",
@@ -194,40 +262,54 @@ torch.backends.cudnn.benchmark = False
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-scene_texts = torch.cat([clip.tokenize(f"a photo of a {c}") for c in scenes]).to(device)
-dist_texts = torch.cat(
-    [clip.tokenize(f"a photo with {c} artifacts") for c in dists]
-).to(device)
-distmap_texts = torch.cat(
-    [clip.tokenize(f"a photo with {c} artifacts") for c in dists_map]
-).to(device)
-quality_texts = torch.cat(
-    [clip.tokenize(f"a photo with {c} quality") for c in qualitys]
-).to(device)
 
+def get_clip_texts(device):
+    import clip
 
-joint_texts = torch.cat(
-    [
-        clip.tokenize(f"a photo of a {c} with {d} artifacts, which is of {q} quality")
-        for q, c, d in product(qualitys, scenes, dists_map)
-    ]
-).to(device)
+    scene_texts = torch.cat([clip.tokenize(f"a photo of a {c}") for c in scenes]).to(
+        device
+    )
+    dist_texts = torch.cat(
+        [clip.tokenize(f"a photo with {c} artifacts") for c in dists]
+    ).to(device)
+    distmap_texts = torch.cat(
+        [clip.tokenize(f"a photo with {c} artifacts") for c in dists_map]
+    ).to(device)
+    quality_texts = torch.cat(
+        [clip.tokenize(f"a photo with {c} quality") for c in qualitys]
+    ).to(device)
 
-# joint_texts = distmap_texts
-if mtl == 1:
+    from itertools import product
+
     joint_texts = torch.cat(
         [
-            clip.tokenize(f"a photo of a {c}, which is of {q} quality")
-            for q, c in product(qualitys, scenes)
+            clip.tokenize(
+                f"a photo of a {c} with {d} artifacts, which is of {q} quality"
+            )
+            for q, c, d in product(qualitys, scenes, dists_map)
         ]
     ).to(device)
-elif mtl == 2:
-    joint_texts = torch.cat(
-        [
-            clip.tokenize(f"a photo with {d} artifacts, which is of {q} quality")
-            for q, d in product(qualitys, dists_map)
-        ]
-    ).to(device)
+
+    # joint_texts = distmap_texts
+    if mtl == 1:
+        joint_texts = torch.cat(
+            [
+                clip.tokenize(f"a photo of a {c}, which is of {q} quality")
+                for q, c in product(qualitys, scenes)
+            ]
+        ).to(device)
+    elif mtl == 2:
+        joint_texts = torch.cat(
+            [
+                clip.tokenize(f"a photo with {d} artifacts, which is of {q} quality")
+                for q, d in product(qualitys, dists_map)
+            ]
+        ).to(device)
+
+    return joint_texts
+
+
+# ... (rest of the code will need to call get_clip_texts) ...
 
 
 def convert_models_to_fp32(model):
@@ -310,7 +392,7 @@ def eval(loader, phase, dataset):
         # x = x.view(x.size(0)*x.size(1), x.size(2), x.size(3), x.size(4))
         # Calculate features
         with torch.no_grad():
-            logits_per_image, _ = do_batch(x, joint_texts)
+            logits_per_image, _ = do_batch(x, get_joint_texts(device))
 
         if mtl == 0:
             logits_per_image = logits_per_image.view(
@@ -404,6 +486,8 @@ def eval(loader, phase, dataset):
         scene_acc = 0
         dist_acc = correct_dist / num_dist
 
+    import scipy.stats
+
     srcc = scipy.stats.mstats.spearmanr(x=q_mos, y=q_hat)[0]
 
     # print_text = dataset + ':' + phase + ': ' + 'scene accuracy:{}, distortion accuracy:{}, srcc:{}'.format(scene_acc, dist_acc, srcc)
@@ -425,6 +509,8 @@ def compute_metrics(y_pred, y):
     """
     compute metrics btw predictions & labels
     """
+    import scipy.stats
+
     # compute SRCC & KRCC
     SRCC = scipy.stats.spearmanr(y, y_pred)[0]
     try:
@@ -439,7 +525,7 @@ def compute_metrics(y_pred, y):
 
     # compute PLCC RMSE
     PLCC = scipy.stats.pearsonr(y, y_pred_logistic)[0]
-    RMSE = np.sqrt(mean_squared_error(y, y_pred_logistic))
+    RMSE = np.sqrt(np.mean((np.array(y) - np.array(y_pred_logistic)) ** 2))
     return SRCC, KRCC, PLCC, RMSE
 
 
@@ -495,6 +581,7 @@ all_krcc = {
 
 for session in range(0, 10):
     print("session {}".format(session + 1))
+    clip = get_clip()
     model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
     ckpt = os.path.join(
         "../CLIP/checkpoints_final/checkpoints",

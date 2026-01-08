@@ -2,7 +2,6 @@ import os
 import torch
 import functools
 import numpy as np
-import pandas as pd
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset
 from tqdm import tqdm
@@ -140,6 +139,8 @@ class ImageDataset3(Dataset):
             img_dir (string): Directory of the images.
             transform (callable, optional): transform to be applied on a sample.
         """
+        import pandas as pd
+
         self.data = pd.read_csv(csv_file, sep="\t", header=None)
         print("%d csv data successfully loaded!" % self.__len__())
 
@@ -241,6 +242,8 @@ class ImageDataset_Inf(Dataset):
             img_dir (string): Directory of the images.
             transform (callable, optional): transform to be applied on a sample.
         """
+        import pandas as pd
+
         self.data = pd.read_csv(csv_file, sep="\t", header=None)
 
         if not test:

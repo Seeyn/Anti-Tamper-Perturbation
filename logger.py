@@ -1,5 +1,11 @@
 import sys
+import os
 import logging
+
+# Suppress TensorFlow and other library noises before they even load
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+
 from loguru import logger
 from rich.logging import RichHandler
 from rich.console import Console
@@ -51,6 +57,12 @@ def setup_logger(level="INFO"):
     # Suppress chatty libraries
     for name in ["huggingface_hub", "transformers", "diffusers", "accelerate", "PIL"]:
         logging.getLogger(name).setLevel(logging.WARNING)
+
+    # Suppress warnings from libraries
+    import warnings
+
+    warnings.filterwarnings("ignore", category=FutureWarning)
+    warnings.filterwarnings("ignore", category=UserWarning)
 
 
 setup_logger()

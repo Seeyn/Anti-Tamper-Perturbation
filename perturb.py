@@ -33,6 +33,13 @@ def get_args():
         "--input-mask", default=None, type=str, help="input-mask path"
     )
     parent_parser.add_argument("--method", type=str, default="CAAT")
+    parent_parser.add_argument(
+        "--mode",
+        type=str,
+        default="all",
+        choices=["all", "auth", "protect"],
+        help="Execution mode: all (default), auth (only authorization), protect (only protection)",
+    )
     args = parent_parser.parse_args()
     return args
 
@@ -51,42 +58,50 @@ method = args.method
 
 
 try:
-    logger.info("[bold blue]### Authorization Start ###[/bold blue]")
-    subprocess.run(
-        [
-            sys.executable,
-            "authorization/infer.py",
-            "--device",
-            device,
-            "--input_dir",
-            input_dir,
-            "--output_dir",
-            str(Path(output_dir) / "Authorized"),
-        ],
-        check=True,
-    )
-    logger.info(f"Output at: [green]{output_dir}[/green]")
-    logger.info("[bold blue]### Authorization End ###[/bold blue]")
+    if args.mode in ["all", "auth"]:
+        logger.info("[bold blue]### Authorization Start ###[/bold blue]")
+        subprocess.run(
+            [
+                sys.executable,
+                "authorization/infer.py",
+                "--device",
+                device,
+                "--input_dir",
+                input_dir,
+                "--output_dir",
+                str(Path(output_dir) / "Authorized"),
+            ],
+            check=True,
+        )
+        logger.info(f"Output at: [green]{output_dir}[/green]")
+        logger.info("[bold blue]### Authorization End ###[/bold blue]")
 
-    logger.info("")
+    if args.mode == "all":
+        logger.info("")
 
-    logger.info("[bold magenta]### Protection Start ###[/bold magenta]")
-    subprocess.run(
-        [
-            sys.executable,
-            "protection/protect.py",
-            "--device",
-            device,
-            "--method",
-            method,
-            "--input_dir",
-            str(Path(output_dir) / "Authorized"),
-            "--output_dir",
-            str(Path(output_dir) / f"ATP_{method}"),
-        ],
-        check=True,
-    )
-    logger.info("[bold magenta]### Protection End ###[/bold magenta]")
+    if args.mode in ["all", "protect"]:
+        logger.info("[bold magenta]### Protection Start ###[/bold magenta]")
+        # If running only protection, we use input_dir directly as the source of authorized images
+        target_input = (
+            str(Path(output_dir) / "Authorized") if args.mode == "all" else input_dir
+        )
+
+        subprocess.run(
+            [
+                sys.executable,
+                "protection/protect.py",
+                "--device",
+                device,
+                "--method",
+                method,
+                "--input_dir",
+                target_input,
+                "--output_dir",
+                str(Path(output_dir) / f"ATP_{method}"),
+            ],
+            check=True,
+        )
+        logger.info("[bold magenta]### Protection End ###[/bold magenta]")
 except KeyboardInterrupt:
     logger.warning("收到中断信号，正在退出...")
     sys.exit(130)
