@@ -77,9 +77,11 @@ class DreamBoothDatasetFromTensor(Dataset):
                 transforms.Resize(
                     size, interpolation=transforms.InterpolationMode.BILINEAR
                 ),
-                transforms.CenterCrop(size)
-                if center_crop
-                else transforms.RandomCrop(size),
+                (
+                    transforms.CenterCrop(size)
+                    if center_crop
+                    else transforms.RandomCrop(size)
+                ),
                 transforms.ToTensor(),
                 transforms.Normalize([0.5], [0.5]),
             ]
@@ -1180,17 +1182,17 @@ def main(args):
         )
 
         if (i + 1) % args.checkpointing_iterations == 0:
-            save_folder = f"{args.output_dir}/noise-ckpt/{i+1}"
-            os.makedirs(save_folder, exist_ok=True)
+            save_folder = Path(args.output_dir) / "noise-ckpt" / str(i + 1)
+            save_folder.mkdir(parents=True, exist_ok=True)
             noised_imgs = perturbed_data.detach()
             img_names = [
-                str(instance_path).split("/")[-1]
+                instance_path.name
                 for instance_path in list(
                     Path(args.instance_data_dir_for_adversarial).iterdir()
                 )
             ]
             for img_pixel, img_name in zip(noised_imgs, img_names):
-                save_path = os.path.join(save_folder, f"{i+1}_noise_{img_name}")
+                save_path = save_folder / f"{i+1}_noise_{img_name}"
                 Image.fromarray(
                     (img_pixel * 127.5 + 128)
                     .clamp(0, 255)

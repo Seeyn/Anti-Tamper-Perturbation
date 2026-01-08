@@ -1,5 +1,6 @@
 from glob import glob
 import os
+from pathlib import Path
 import yaml
 import argparse
 
@@ -42,57 +43,57 @@ device = args.device
 
 assert method in set(["CAAT", "ANTIDB", "ADVDM", "METACLOAK"])
 
-config_path = os.path.abspath("configs/protection.yaml")
+config_path = Path("configs/protection.yaml").resolve()
 config = load_config(config_path)
 device = "".join(filter(str.isdigit, device))
-os.makedirs(output_dir, exist_ok=True)
-input_dir = glob(f"{input_dir}/*")
+Path(output_dir).mkdir(parents=True, exist_ok=True)
+input_paths = list(Path(input_dir).iterdir())
 for key in config[method]:
     print(key, config[method][key])
 
 if method == "CAAT":
-    for each in input_dir:
-        i_name = each.split("/")[-1]
+    for each in input_paths:
+        i_name = each.name
         if ".pt" in i_name:
             continue
         print(i_name)
         os.system(
             "CUDA_VISIBLE_DEVICES=%s bash protection/CAAT/train_CAAT_freq.sh %s %s %s"
-            % (device, each + "/set_B", output_dir + "/" + i_name, config_path)
+            % (device, each / "set_B", Path(output_dir) / i_name, config_path)
         )
 
 elif method == "METACLOAK":
-    for each in input_dir:
-        i_name = each.split("/")[-1]
+    for each in input_paths:
+        i_name = each.name
         if ".pt" in i_name:
             continue
         print(i_name)
-        project_path = os.path.abspath("protection/Metacloak")
+        project_path = Path("protection/Metacloak").resolve()
         os.system(
             "CUDA_VISIBLE_DEVICES=%s bash protection/Metacloak/script/gen_and_eval_freq.sh %s %s %s"
-            % (device, each, output_dir + "/" + i_name, project_path)
+            % (device, each, Path(output_dir) / i_name, project_path)
         )
 
 elif method == "ADVDM":
-    for each in input_dir:
-        i_name = each.split("/")[-1]
+    for each in input_paths:
+        i_name = each.name
         if ".pt" in i_name:
             continue
         print(i_name)
         os.system(
             "CUDA_VISIBLE_DEVICES=%s bash protection/ADVDM/scripts/train_adv_freq.sh %s %s %s"
-            % (device, each + "/set_B", output_dir + "/" + i_name, config_path)
+            % (device, each / "set_B", Path(output_dir) / i_name, config_path)
         )
 
 elif method == "ANTIDB":
-    for each in input_dir:
-        i_name = each.split("/")[-1]
+    for each in input_paths:
+        i_name = each.name
         if ".pt" in i_name:
             continue
         print(i_name)
         os.system(
             "CUDA_VISIBLE_DEVICES=%s bash protection/ANTIDB/scripts/gen_aspl_freq.sh %s %s %s"
-            % (device, each, output_dir + "/" + i_name, config_path)
+            % (device, each, Path(output_dir) / i_name, config_path)
         )
 
 else:

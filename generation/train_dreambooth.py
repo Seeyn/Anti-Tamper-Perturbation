@@ -472,7 +472,7 @@ class DreamBoothDataset(Dataset):
         self.instance_images_path = list(Path(instance_data_root).iterdir())
         tmp_instance_images = []
         for p_ in self.instance_images_path:
-            if "png" in str(p_).split("/")[-1] or "jpg" in str(p_).split("/")[-1]:
+            if p_.suffix.lower() in [".png", ".jpg", ".jpeg"]:
                 tmp_instance_images.append(p_)
         self.instance_images_path = tmp_instance_images
 
@@ -496,9 +496,11 @@ class DreamBoothDataset(Dataset):
                 transforms.Resize(
                     size, interpolation=transforms.InterpolationMode.BILINEAR
                 ),
-                transforms.CenterCrop(size)
-                if center_crop
-                else transforms.RandomCrop(size),
+                (
+                    transforms.CenterCrop(size)
+                    if center_crop
+                    else transforms.RandomCrop(size)
+                ),
                 transforms.ToTensor(),
                 transforms.Normalize([0.5], [0.5]),
             ]
@@ -619,8 +621,8 @@ def infer(
     for prompt in prompts:
         print(prompt)
         norm_prompt = prompt.lower().replace(",", "").replace(" ", "_")
-        out_path = f"{checkpoint_path}/dreambooth/{norm_prompt}"
-        os.makedirs(out_path, exist_ok=True)
+        out_path = Path(checkpoint_path) / "dreambooth" / norm_prompt
+        out_path.mkdir(parents=True, exist_ok=True)
         for i in range(n_img // bs):
             images = pipe(
                 [prompt] * bs,
@@ -628,7 +630,7 @@ def infer(
                 guidance_scale=guidance_scale,
             ).images
             for idx, image in enumerate(images):
-                image.save(f"{out_path}/{i}_{idx}.png")
+                image.save(out_path / f"{i}_{idx}.png")
     del pipe
 
 
@@ -756,13 +758,13 @@ def main(args):
                 repo_name = args.hub_model_id
             create_repo(repo_name, exist_ok=True, token=args.hub_token)
 
-            with open(os.path.join(args.output_dir, ".gitignore"), "w+") as gitignore:
+            with open(Path(args.output_dir) / ".gitignore", "w+") as gitignore:
                 if "step_*" not in gitignore:
                     gitignore.write("step_*\n")
                 if "epoch_*" not in gitignore:
                     gitignore.write("epoch_*\n")
         elif args.output_dir is not None:
-            os.makedirs(args.output_dir, exist_ok=True)
+            Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 
     # Load the tokenizer
     if args.tokenizer_name:
@@ -1004,7 +1006,7 @@ def main(args):
     # Potentially load in the weights and states from a previous save
     if args.resume_from_checkpoint:
         if args.resume_from_checkpoint != "latest":
-            path = os.path.basename(args.resume_from_checkpoint)
+            path = Path(args.resume_from_checkpoint).name
         else:
             # Get the most recent checkpoint
             dirs = os.listdir(args.output_dir)
@@ -1019,7 +1021,7 @@ def main(args):
             args.resume_from_checkpoint = None
         else:
             accelerator.print(f"Resuming from checkpoint {path}")
-            accelerator.load_state(os.path.join(args.output_dir, path))
+            accelerator.load_state(Path(args.output_dir) / path)
             global_step = int(path.split("-")[1])
 
             resume_global_step = global_step * args.gradient_accumulation_steps
@@ -1132,15 +1134,14 @@ def main(args):
                 if global_step % args.checkpointing_steps == 0:
                     if accelerator.is_main_process:
                         if args.noise_type is None:
-                            save_path = os.path.join(
-                                args.output_dir,
-                                f"checkpoint-{global_step}" + args.suffix,
+                            save_path = (
+                                Path(args.output_dir)
+                                / f"checkpoint-{global_step}{args.suffix}"
                             )
                         else:
-                            save_path = os.path.join(
-                                args.output_dir,
-                                f"checkpoint-{global_step}"
-                                + "-%s-%.0f" % (args.noise_type, args.noise_args),
+                            save_path = Path(args.output_dir) / (
+                                f"checkpoint-{global_step}-"
+                                f"{args.noise_type}-{args.noise_args:.0f}"
                             )
                         ckpt_pipeline = DiffusionPipeline.from_pretrained(
                             args.pretrained_model_name_or_path,
@@ -1154,9 +1155,14 @@ def main(args):
                         infer(save_path, prompts, n_img=16, bs=4, n_steps=100)
                         logger.info(f"Saved state to {save_path}")
                         print(save_path)
-                        for dir in glob(save_path + "/*"):
-                            if not dir.split("/")[-1] == "dreambooth":
-                                os.system("rm -r %s" % dir)
+                        for d in save_path.iterdir():
+                            if d.name != "dreambooth":
+                                import shutil
+
+                                if d.is_dir():
+                                    shutil.rmtree(d)
+                                else:
+                                    d.unlink()
 
             logs = {"loss": loss.detach().item(), "lr": lr_scheduler.get_last_lr()[0]}
             progress_bar.set_postfix(**logs)

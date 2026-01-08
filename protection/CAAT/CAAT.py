@@ -1119,17 +1119,15 @@ def main(args):
 
                 if global_step % args.checkpointing_steps == 0:
                     if accelerator.is_main_process:
-                        save_folder = f"{args.output_dir}/{global_step}"
-                        os.makedirs(save_folder, exist_ok=True)
+                        save_folder = Path(args.output_dir) / str(global_step)
+                        save_folder.mkdir(parents=True, exist_ok=True)
                         noised_imgs = pertubed_images.detach()
                         img_names = [
-                            str(instance_path[0]).split("/")[-1]
+                            instance_path[0].name
                             for instance_path in train_dataset.instance_images_path
                         ]
                         for img_pixel, img_name in zip(noised_imgs, img_names):
-                            save_path = os.path.join(
-                                save_folder, f"{global_step}_noise_{img_name}"
-                            )
+                            save_path = save_folder / f"{global_step}_noise_{img_name}"
                             Image.fromarray(
                                 (img_pixel * 127.5 + 128)
                                 .clamp(0, 255)

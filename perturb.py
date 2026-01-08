@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import yaml
 import argparse
 
@@ -50,7 +51,7 @@ method = args.method
 print("###Authorization Start###")
 os.system(
     "python authorization/infer.py --device %s --input_dir  %s --output_dir %s"
-    % (device, input_dir, os.path.join(output_dir, "Authorized"))
+    % (device, input_dir, Path(output_dir) / "Authorized")
 )
 print("Output at: %s" % output_dir)
 print("###Authorization End###")
@@ -63,8 +64,8 @@ os.system(
     % (
         device,
         method,
-        os.path.join(output_dir, "Authorized"),
-        os.path.join(output_dir, "ATP_%s" % method),
+        Path(output_dir) / "Authorized",
+        Path(output_dir) / f"ATP_{method}",
     )
 )
 print("###Protection End###")

@@ -2,7 +2,7 @@
 
 # common dependencies
 import os
-from os import path
+from pathlib import Path
 import warnings
 import time
 import pickle
@@ -42,7 +42,6 @@ if tf_version == 2:
 
 
 def build_model(model_name):
-
     """
     This function builds a deepface model
     Parameters:
@@ -97,7 +96,6 @@ def verify(
     align=True,
     normalization="base",
 ):
-
     """
     This function verifies an image pair is same person or different persons. In the background,
     verification function represents facial images as vectors and then calculates the similarity
@@ -237,7 +235,6 @@ def analyze(
     align=True,
     silent=False,
 ):
-
     """
     This function analyzes facial attributes including age, gender, emotion and race.
     In the background, analysis function builds convolutional neural network models to
@@ -413,7 +410,6 @@ def find_without_savepkl(
     silent=False,
     # ckpt=True,
 ):
-
     """
     This function applies verification several times and find the identities in a database
 
@@ -464,7 +460,10 @@ def find_without_savepkl(
     # file_name = f"representations_{model_name}_{random_timestamp}.pkl"
     # file_name = file_name.replace("-", "_").lower()
 
-    if path.exists(db_path + "/" + file_name):
+    db_path_obj = Path(db_path)
+    file_path = db_path_obj / file_name
+
+    if file_path.exists():
 
         #     if not silent:
         #         print(
@@ -473,7 +472,7 @@ def find_without_savepkl(
         #             + "delete this file and call find function again. It will create it again."
         #         )
 
-        with open(f"{db_path}/{file_name}", "rb") as f:
+        with open(file_path, "rb") as f:
             representations = pickle.load(f)
 
     #     if not silent:
@@ -483,13 +482,10 @@ def find_without_savepkl(
         employees = []
 
         for r, _, f in os.walk(db_path):
+            r_path = Path(r)
             for file in f:
-                if (
-                    (".jpg" in file.lower())
-                    or (".jpeg" in file.lower())
-                    or (".png" in file.lower())
-                ):
-                    exact_path = r + "/" + file
+                if file.lower().endswith((".jpg", ".jpeg", ".png")):
+                    exact_path = str(r_path / file)
                     employees.append(exact_path)
 
         if len(employees) == 0:
@@ -541,7 +537,7 @@ def find_without_savepkl(
 
         # -------------------------------
 
-        with open(f"{db_path}/{file_name}", "wb") as f:
+        with open(file_path, "wb") as f:
             pickle.dump(representations, f)
 
     # if not silent:
@@ -639,7 +635,6 @@ def represent(
     align=True,
     normalization="base",
 ):
-
     """
     This function represents facial images as vectors. The function uses convolutional neural
     networks models to generate vector embeddings.
@@ -732,7 +727,6 @@ def stream(
     time_threshold=5,
     frame_threshold=5,
 ):
-
     """
     This function applies real time face recognition and facial attribute analysis
 
@@ -788,7 +782,6 @@ def extract_faces(
     align=True,
     grayscale=False,
 ):
-
     """
     This function applies pre-processing stages of a face recognition pipeline
     including detection and alignment

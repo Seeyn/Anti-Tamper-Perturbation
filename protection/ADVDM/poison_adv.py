@@ -490,7 +490,7 @@ def main(args):
     text_encoder.to(accelerator.device)
     vae.to(accelerator.device, dtype=weight_dtype)
 
-    img_nums = len(os.listdir(args.instance_data_dir))
+    img_nums = len(list(Path(args.instance_data_dir).iterdir()))
     poison_noise = torch.zeros([img_nums, 3, args.resolution, args.resolution])
 
     data_iter = iter(train_dataloader)
@@ -652,18 +652,15 @@ def main(args):
                 ).numpy()
             poisoned_dataset = poisoned_dataset_tmp
 
-        poisoned_img_output_path = args.output_dir
+        poisoned_img_output_path = Path(args.output_dir)
 
-        if os.path.exists(poisoned_img_output_path) == False:
-            os.mkdir(poisoned_img_output_path)
+        poisoned_img_output_path.mkdir(parents=True, exist_ok=True)
         poisoned_dataset = np.uint8(poisoned_dataset.transpose((0, 2, 3, 1)))
 
         for i in range(len(poisoned_dataset)):
-            name = paths[i].split("/")[-1].split(".")[0]
+            name = Path(paths[i]).stem
             poisoned_dataset_pil = Image.fromarray(np.array(poisoned_dataset[i]))
-            poisoned_dataset_pil.save(
-                poisoned_img_output_path + "/noise_{}.png".format(name)
-            )
+            poisoned_dataset_pil.save(poisoned_img_output_path / f"noise_{name}.png")
 
 
 def dct_img(x, norm="ortho"):

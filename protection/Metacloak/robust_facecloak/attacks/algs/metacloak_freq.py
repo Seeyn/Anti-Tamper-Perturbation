@@ -422,7 +422,7 @@ def main(args):
             config = yaml.safe_load(f)
         return config
 
-    config = load_config(os.path.abspath("configs/protection.yaml"))
+    config = load_config(Path("configs/protection.yaml").resolve())
 
     # Generate class images if prior preservation is enabled.
     if args.with_prior_preservation:
@@ -566,18 +566,18 @@ def main(args):
     ]
 
     def save_image(perturbed_data, id_stamp):
-        save_folder = f"{args.output_dir}/noise-ckpt/{id_stamp}"
-        os.makedirs(save_folder, exist_ok=True)
+        save_folder = Path(args.output_dir) / "noise-ckpt" / id_stamp
+        save_folder.mkdir(parents=True, exist_ok=True)
         noised_imgs = perturbed_data.detach()
         # print(list(Path(args.instance_data_dir_for_adversarial).iterdir()))
         img_names = [
-            str(instance_path).split("/")[-1]
+            instance_path.name
             for instance_path in list(
                 Path(args.instance_data_dir_for_adversarial).iterdir()
             )
         ]
         for img_pixel, img_name in zip(noised_imgs, img_names):
-            save_path = os.path.join(save_folder, f"noisy_{img_name}")
+            save_path = save_folder / f"noisy_{img_name}"
             Image.fromarray(
                 img_pixel.float()
                 .detach()

@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import time
 import torch
 import numpy as np
@@ -44,7 +45,7 @@ gamma = args.gamma
 input_mask = args.input_mask
 pixel_space = args.pixel_space
 random_maskFlag = args.random_maskFlag
-config_path = os.path.abspath("configs/authorization.yaml")
+config_path = Path("configs/authorization.yaml").resolve()
 config = load_config(config_path)
 
 message_length = config["message_length"]
@@ -121,7 +122,7 @@ for _ in range(epoch_num):
                 model,
                 experiment_name=config["train"]["store_folder"],
                 epoch=global_step,
-                checkpoint_folder=os.path.join(this_run_folder, "checkpoints"),
+                checkpoint_folder=Path(this_run_folder) / "checkpoints",
             )
 
 tb_logger.writer.close()

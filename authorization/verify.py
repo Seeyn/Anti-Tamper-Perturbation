@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import time
 import torch
 import numpy as np
@@ -22,9 +23,9 @@ def sorted_nicely(l):
 
 
 def last_checkpoint_from_folder(folder: str):
-    last_file = sorted_nicely(os.listdir(folder))[-1]
-    last_file = os.path.join(folder, last_file)
-    return last_file
+    folder_path = Path(folder)
+    last_file = sorted_nicely([f.name for f in folder_path.iterdir()])[-1]
+    return folder_path / last_file
 
 
 def model_from_checkpoint(hidden_net, checkpoint):
@@ -120,9 +121,10 @@ model = model.encoder_decoder
 model.eval()
 bitwise_avg_err = []
 
-paths = glob(f"{input_dir}/*/{dir_suffix}/*.png")
+paths = list(Path(input_dir).glob(f"*/{dir_suffix}/*.png"))
 
-suffix_length = len(dir_suffix.split("/"))
+suffix_parts = Path(dir_suffix).parts
+suffix_length = len(suffix_parts)
 
 transform = transforms.Compose(
     [
@@ -142,7 +144,7 @@ if noise_type is not None:
 unauthorized_image_num = 0
 id_set = {}
 for path in paths:
-    id_dir = path.split("/")[-(1 + suffix_length)]
+    id_dir = path.parts[-(1 + suffix_length + 1)]
     id_set[id_dir] = 0
 
 for path in tqdm(paths):
@@ -151,16 +153,14 @@ for path in tqdm(paths):
     if noise_type is None:
         image = transform(Image.open(image_path)).unsqueeze(0)
     else:
-        image = cv2.imread(image_path).astype(np.float32) / 255.0
+        image = cv2.imread(str(image_path)).astype(np.float32) / 255.0
         image = degrader.degrade(image).unsqueeze(0)
     image = image.to(device)
-    image_name = image_path.split("/")[-1]
-    id_dir = image_path.split("/")[-(1 + suffix_length)]
+    image_name = image_path.name
+    id_dir = image_path.parts[-(1 + suffix_length + 1)]
     torch_set = torch.load(
-        os.path.join(
-            test_set,
-            id_dir + "_" + image_name.replace(".png", ".pt").replace(img_prefix, ""),
-        )
+        Path(test_set)
+        / f"{id_dir}_{image_name.replace('.png', '.pt').replace(img_prefix, '')}"
     )
     message = torch_set["message"].to(device)
     random_mask = torch_set["random_mask"].to(device)

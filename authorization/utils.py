@@ -6,6 +6,7 @@ from torch.utils.tensorboard import SummaryWriter
 from networks import HIDNet
 import logging
 import os
+from pathlib import Path
 
 
 def set_seed(seed):
@@ -72,12 +73,12 @@ def save_checkpoint(
     model: HIDNet, experiment_name: str, epoch: int, checkpoint_folder: str
 ):
     """Saves a checkpoint at the end of an epoch."""
-    if not os.path.exists(checkpoint_folder):
-        os.makedirs(checkpoint_folder)
+    checkpoint_folder_path = Path(checkpoint_folder)
+    checkpoint_folder_path.mkdir(parents=True, exist_ok=True)
 
     checkpoint_filename = f"{experiment_name}--epoch-{epoch}.pyt"
-    checkpoint_filename = os.path.join(checkpoint_folder, checkpoint_filename)
-    logging.info("Saving checkpoint to {}".format(checkpoint_filename))
+    checkpoint_file_path = checkpoint_folder_path / checkpoint_filename
+    logging.info(f"Saving checkpoint to {checkpoint_file_path}")
     checkpoint = {
         "enc-dec-model": model.encoder_decoder.state_dict(),
         "enc-dec-optim": model.optimizer_enc_dec.state_dict(),
@@ -86,7 +87,7 @@ def save_checkpoint(
         "mapper-model": model.mapping_network.state_dict(),
         "epoch": epoch,
     }
-    torch.save(checkpoint, checkpoint_filename)
+    torch.save(checkpoint, checkpoint_file_path)
     logging.info("Saving checkpoint done.")
 
 
@@ -98,16 +99,14 @@ def get_phis(phi_dimension, batch_size, eps=1e-8):
 
 
 def create_folder_for_run(runs_folder, experiment_name):
-    if not os.path.exists(runs_folder):
-        os.makedirs(runs_folder)
+    runs_folder_path = Path(runs_folder)
+    runs_folder_path.mkdir(parents=True, exist_ok=True)
 
-    this_run_folder = os.path.join(runs_folder, f"{experiment_name}")
-    if not os.path.exists(runs_folder):
-        os.makedirs(this_run_folder)
-    if not os.path.exists(os.path.join(this_run_folder, "checkpoints")):
-        os.makedirs(os.path.join(this_run_folder, "checkpoints"))
+    this_run_folder = runs_folder_path / f"{experiment_name}"
+    this_run_folder.mkdir(parents=True, exist_ok=True)
+    (this_run_folder / "checkpoints").mkdir(parents=True, exist_ok=True)
 
-    return this_run_folder
+    return str(this_run_folder)
 
 
 import cv2

@@ -1,5 +1,6 @@
 from glob import glob
 import os
+from pathlib import Path
 import argparse
 import yaml
 
@@ -35,30 +36,31 @@ device = args.device
 purification = args.purification
 assert purification in set(["naive", "gridpure", ""])
 
-config_path = os.path.abspath(f"configs/generation.yaml")
+config_path = Path("configs/generation.yaml").resolve()
 config = load_config(config_path)
 device = "".join(filter(str.isdigit, device))
-instance_dir = glob(f"{input_dir}/*")
+instance_paths = list(Path(input_dir).iterdir())
 dir_suffix = config[method]["dir_suffix"]
-for each in instance_dir:
-    i_name = each.split("/")[-1]
+for each in instance_paths:
+    i_name = each.name
     if ".pt" in i_name:
         continue
     print(i_name)
+    train_dir = Path(input_dir) / i_name / dir_suffix
     if purification == "":
         os.system(
             "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB.sh %s "
-            % (device, input_dir + "/" + i_name + f"/{dir_suffix}")
+            % (device, train_dir)
         )
     elif purification == "naive":
         os.system(
             "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB_withPurified.sh %s "
-            % (device, input_dir + "/" + i_name + f"/{dir_suffix}")
+            % (device, train_dir)
         )
     elif purification == "gridpure":
         os.system(
             "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB_gridpure.sh %s "
-            % (device, input_dir + "/" + i_name + f"/{dir_suffix}")
+            % (device, train_dir)
         )
     else:
         raise Exception("check purification type")

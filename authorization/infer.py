@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import torch
 import numpy as np
 import utils
@@ -20,9 +21,9 @@ def sorted_nicely(l):
 
 
 def last_checkpoint_from_folder(folder: str):
-    last_file = sorted_nicely(os.listdir(folder))[-1]
-    last_file = os.path.join(folder, last_file)
-    return last_file
+    folder_path = Path(folder)
+    last_file = sorted_nicely([f.name for f in folder_path.iterdir()])[-1]
+    return folder_path / last_file
 
 
 def model_from_checkpoint(hidden_net, checkpoint):
@@ -88,7 +89,7 @@ transform = transforms.Compose(
     ]
 )
 os.makedirs(output_dir, exist_ok=True)
-os.makedirs(os.path.join(output_dir, "Authorization_messages"), exist_ok=True)
+(Path(output_dir) / "Authorization_messages").mkdir(parents=True, exist_ok=True)
 
 for batch_id, (path, image) in tqdm(enumerate(val_dataloader)):
     image = image.to(device)
@@ -105,16 +106,17 @@ for batch_id, (path, image) in tqdm(enumerate(val_dataloader)):
         val_losses[key] += losses[key]
 
     for id, e_img in enumerate(encoded_images):
-        image_name = path[id].split("/")[-1].split(".")[0]
-        id_dir = path[id].split("/")[-3]
-        set_dir = path[id].split("/")[-2]
-        dir_path = os.path.join(output_dir, id_dir, set_dir)
-        os.makedirs(dir_path, exist_ok=True)
+        p = Path(path[id])
+        image_name = p.stem
+        id_dir = p.parts[-3]
+        set_dir = p.parts[-2]
+        dir_path = Path(output_dir) / id_dir / set_dir
+        dir_path.mkdir(parents=True, exist_ok=True)
         transforms.ToPILImage()(((e_img.clip(-1, 1) + 1) / 2).clip(0, 1).cpu()).save(
-            "%s/%s.png" % (dir_path, image_name)
+            dir_path / f"{image_name}.png"
         )
         torch_set = {"random_mask": random_mask.cpu(), "message": message[id].cpu()}
         torch.save(
             torch_set,
-            "%s/Authorization_messages/%s.pt" % (output_dir, id_dir + "_" + image_name),
+            Path(output_dir) / "Authorization_messages" / f"{id_dir}_{image_name}.pt",
         )

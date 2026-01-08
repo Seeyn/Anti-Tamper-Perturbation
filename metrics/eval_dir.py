@@ -19,6 +19,7 @@ import clip
 clip_model, clip_preprocess = clip.load("ViT-B/32")
 import glob
 import os
+from pathlib import Path
 from ism_fdfr import matching_score_id
 from tqdm import tqdm
 from torchvision.transforms import ToTensor
@@ -46,7 +47,7 @@ def load_config(config_file):
 args = get_args()
 dataset = args.dataset
 method = args.method
-config_path = os.path.abspath(f"configs/metrics.yaml")
+config_path = Path("configs/metrics.yaml").resolve()
 config = load_config(config_path)
 
 if type(config["instance_dir"]) is list:
@@ -59,17 +60,20 @@ if type(config["instance_dir"]) is list:
             dataset = "CelebA-HQ"
 
         dir_suffix = config[method]["dir_suffix"]
-        dir_suffix_length = len(dir_suffix.split("/"))
+        suffix_parts = Path(dir_suffix).parts
+        dir_suffix_length = len(suffix_parts)
         img_prefix = config[method]["img_prefix"]
         prompt = config["prompt"]
-        output_path = config["output_dir"]
-        os.makedirs(output_path, exist_ok=True)
-        generated_img_paths = glob.glob(
-            f"{instance_dir}/*/{dir_suffix}/DREAMBOOTH/checkpoint-1000/dreambooth/{prompt}/*"
+        output_path = Path(config["output_dir"])
+        output_path.mkdir(parents=True, exist_ok=True)
+        generated_img_paths = list(
+            Path(instance_dir).glob(
+                f"*/{dir_suffix}/DREAMBOOTH/checkpoint-1000/dreambooth/{prompt}/*"
+            )
         )
 
-        id_emb_path = config[f"{dataset}"]["id_emb_path"]
-        with open(f"{id_emb_path}", "rb") as f:
+        id_emb_path = Path(config[f"{dataset}"]["id_emb_path"])
+        with open(id_emb_path, "rb") as f:
             avg_id_set = pickle.load(f)
 
         item_list = ["checkpoint-1000"]
@@ -89,12 +93,12 @@ if type(config["instance_dir"]) is list:
             image_paths = []
             for input_path in tqdm(generated_img_paths):
 
-                input = input_path.replace("checkpoint-1000", item)
+                input_file = Path(str(input_path).replace("checkpoint-1000", item))
 
                 avg_id_embedding = avg_id_set[
-                    input.split("/")[-(5 + dir_suffix_length)]
+                    input_file.parts[-(5 + dir_suffix_length)]
                 ]
-                img = Image.open(input).convert("RGB")
+                img = Image.open(input_file).convert("RGB")
 
                 liqe_img = ToTensor()(img).unsqueeze(0)
                 q1, s1, d1 = lieq_model(liqe_img)
@@ -126,7 +130,7 @@ if type(config["instance_dir"]) is list:
                 if ism is None:
                     ism = -1
                 ism_scores.append(ism)
-                image_paths.append(input)
+                image_paths.append(str(input_file))
                 liqe.append(liqe_score)
                 clip_iqac.append(iqac_score)
                 clip_iqa.append(iqa_socre)
@@ -143,10 +147,8 @@ if type(config["instance_dir"]) is list:
                 "path": image_paths,
             }
 
-            dir_name = instance_dir.split("/")[-1]
-            with open(
-                output_path + f"/{dataset}_{dir_name}_{item}_{prompt}", "wb"
-            ) as f:
+            dir_name = Path(instance_dir).name
+            with open(output_path / f"{dataset}_{dir_name}_{item}_{prompt}", "wb") as f:
                 pickle.dump(results_dict, f)
 
 else:
