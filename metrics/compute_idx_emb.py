@@ -43,7 +43,7 @@ def compute_idx_embedding(paths):
                     embedding = embedding_objs[0]["embedding"]
                     embedding = np.array(embedding)
                     ave_embedding += embedding
-                except:
+                except Exception:
                     print(">>>>>>> SKIP", file)
     ave_embedding /= count_file
     return ave_embedding

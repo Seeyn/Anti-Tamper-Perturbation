@@ -35,7 +35,7 @@ def _init():
                 sources=sources,
                 extra_cuda_cflags=["--use_fast_math"],
             )
-        except:
+        except Exception:
             warnings.warn(
                 "Failed to build CUDA kernels for upfirdn2d. Falling back to slow reference implementation. Details:\n\n"
                 + traceback.format_exc()

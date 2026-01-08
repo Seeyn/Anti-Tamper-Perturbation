@@ -250,7 +250,7 @@ class DreamBoothDataset(Dataset):
             # try:
             #     Image.open(file)
             #     instance_data.append(file)
-            # except:
+            # except Exception:
             #     pass
             # only load those images with png and jpg format
             if file.suffix in [".png", ".jpg"]:
@@ -301,9 +301,11 @@ class DreamBoothDataset(Dataset):
                 transforms.Resize(
                     size, interpolation=transforms.InterpolationMode.BILINEAR
                 ),
-                transforms.CenterCrop(size)
-                if center_crop
-                else transforms.RandomCrop(size),
+                (
+                    transforms.CenterCrop(size)
+                    if center_crop
+                    else transforms.RandomCrop(size)
+                ),
             ]
             + defense_transforms
             + [
@@ -316,9 +318,11 @@ class DreamBoothDataset(Dataset):
                 transforms.Resize(
                     size, interpolation=transforms.InterpolationMode.BILINEAR
                 ),
-                transforms.CenterCrop(size)
-                if center_crop
-                else transforms.RandomCrop(size),
+                (
+                    transforms.CenterCrop(size)
+                    if center_crop
+                    else transforms.RandomCrop(size)
+                ),
                 transforms.ToTensor(),
                 transforms.Normalize([0.5], [0.5]),
             ]

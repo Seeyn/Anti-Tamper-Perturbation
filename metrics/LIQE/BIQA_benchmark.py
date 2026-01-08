@@ -516,7 +516,7 @@ def compute_metrics(y_pred, y):
     SRCC = scipy.stats.spearmanr(y, y_pred)[0]
     try:
         KRCC = scipy.stats.kendalltau(y, y_pred)[0]
-    except:
+    except Exception:
         KRCC = scipy.stats.kendalltau(y, y_pred, method="asymptotic")[0]
 
     # logistic regression btw y_pred & y

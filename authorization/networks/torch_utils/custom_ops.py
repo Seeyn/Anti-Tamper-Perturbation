@@ -140,7 +140,7 @@ def get_plugin(module_name, sources, **build_kwargs):
             )
         module = importlib.import_module(module_name)
 
-    except:
+    except Exception:
         if verbosity == "brief":
             print("Failed!")
         raise
