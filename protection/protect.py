@@ -35,7 +35,10 @@ def load_config(config_file):
 
 
 args = get_args()
-locals().update(vars(args))
+method = args.method
+input_dir = args.input_dir
+output_dir = args.output_dir
+device = args.device
 
 assert method in set(["CAAT", "ANTIDB", "ADVDM", "METACLOAK"])
 

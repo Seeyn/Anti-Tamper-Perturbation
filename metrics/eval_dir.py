@@ -44,7 +44,8 @@ def load_config(config_file):
 
 
 args = get_args()
-locals().update(vars(args))
+dataset = args.dataset
+method = args.method
 config_path = os.path.abspath(f"configs/metrics.yaml")
 config = load_config(config_path)
 

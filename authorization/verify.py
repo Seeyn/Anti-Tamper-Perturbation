@@ -97,7 +97,15 @@ print("seed:", seed)
 print("message_length:", message_length)
 
 args = get_args()
-locals().update(vars(args))
+input_dir = args.input_dir
+message_dir = args.message_dir
+method = args.method
+device = args.device
+gamma = args.gamma
+input_mask = args.input_mask
+noise_type = args.noise_type
+noise_args = args.noise_args
+pixel_space = args.pixel_space
 dir_suffix = config[method]["dir_suffix"]
 img_prefix = config[method]["img_prefix"]
 

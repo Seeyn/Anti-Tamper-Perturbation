@@ -41,7 +41,10 @@ def load_config(config_file):
 
 
 args = get_args()
-locals().update(vars(args))
+input_dir = args.input_dir
+output_dir = args.output_dir
+device = args.device
+method = args.method
 
 
 print("###Authorization Start###")

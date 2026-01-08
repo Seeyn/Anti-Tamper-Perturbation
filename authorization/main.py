@@ -39,7 +39,11 @@ def model_from_checkpoint(hidden_net, checkpoint):
 
 
 args = options.get_args()
-locals().update(vars(args))
+device = args.device
+gamma = args.gamma
+input_mask = args.input_mask
+pixel_space = args.pixel_space
+random_maskFlag = args.random_maskFlag
 config_path = os.path.abspath("configs/authorization.yaml")
 config = load_config(config_path)
 

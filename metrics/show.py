@@ -43,6 +43,6 @@ def print_results(path):
 
 
 args = get_args()
-locals().update(vars(args))
+path = args.path
 print("CLIP-IQAC	LIQE            ISM             FDFR             PSR")
 print_results(path)

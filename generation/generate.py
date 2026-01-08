@@ -29,7 +29,10 @@ def load_config(config_file):
 
 
 args = get_args()
-locals().update(vars(args))
+input_dir = args.input_dir
+method = args.method
+device = args.device
+purification = args.purification
 assert purification in set(["naive", "gridpure", ""])
 
 config_path = os.path.abspath(f"configs/generation.yaml")

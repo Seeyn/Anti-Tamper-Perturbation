@@ -53,7 +53,12 @@ seed = config["seed"]
 utils.set_seed(seed)
 message_length = config["message_length"]
 args = options.get_args()
-locals().update(vars(args))
+input_dir = args.input_dir
+output_dir = args.output_dir
+device = args.device
+gamma = args.gamma
+input_mask = args.input_mask
+pixel_space = args.pixel_space
 
 print("seed:", seed)
 print("message_length:", message_length)

@@ -35,5 +35,10 @@ def get_args():
     parent_parser.add_argument(
         "--pixel-space", action="store_true", help="pixel space or not"
     )
+    parent_parser.add_argument(
+        "--random_maskFlag",
+        action="store_true",
+        help="whether to use random mask per batch",
+    )
     args = parent_parser.parse_args()
     return args
