@@ -96,4 +96,4 @@ elif method == "ANTIDB":
         )
 
 else:
-    raise "Method Unknown"
+    raise ValueError("Method Unknown")
