@@ -22,7 +22,7 @@ class HIDNet:
         super().__init__()
         self.device = device
         self.mapping_network = nn.Identity()
-        config_path = os.path.abspath(f"../configs/authorization.yaml")
+        config_path = os.path.abspath(f"configs/authorization.yaml")
         self.config = load_config(config_path)
         self.encoder_decoder = EncoderDecoder(
             encode_message_length=self.config["message_length"],

@@ -32,7 +32,7 @@ args = get_args()
 locals().update(vars(args))
 assert purification in set(["naive", "gridpure", ""])
 
-config_path = os.path.abspath(f"../configs/generation.yaml")
+config_path = os.path.abspath(f"configs/generation.yaml")
 config = load_config(config_path)
 device = device[-1]
 instance_dir = glob(f"{input_dir}/*")
@@ -44,17 +44,17 @@ for each in instance_dir:
     print(i_name)
     if purification == "":
         os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash scripts/train_DB.sh %s "
+            "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB.sh %s "
             % (device, input_dir + "/" + i_name + f"/{dir_suffix}")
         )
     elif purification == "naive":
         os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash scripts/train_DB_withPurified.sh %s "
+            "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB_withPurified.sh %s "
             % (device, input_dir + "/" + i_name + f"/{dir_suffix}")
         )
     elif purification == "gridpure":
         os.system(
-            "CUDA_VISIBLE_DEVICES=%s bash scripts/train_DB_gridpure.sh %s "
+            "CUDA_VISIBLE_DEVICES=%s bash generation/scripts/train_DB_gridpure.sh %s "
             % (device, input_dir + "/" + i_name + f"/{dir_suffix}")
         )
     else:

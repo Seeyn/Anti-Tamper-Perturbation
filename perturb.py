@@ -8,19 +8,23 @@ def get_args():
     parent_parser.add_argument(
         "--input_dir",
         type=str,
-        required=True,
-        default=None,
+        required=False,
+        default="data/CelebA-HQ",
         help="The directory of input images",
     )
     parent_parser.add_argument(
         "--output_dir",
         type=str,
-        required=True,
-        default=None,
+        required=False,
+        default="data/perturbed",
         help="The directory of output authorized images",
     )
     parent_parser.add_argument(
-        "--device", required=True, type=str, help="device for training, e.g., cuda:0"
+        "--device",
+        required=False,
+        type=str,
+        default="cuda:0",
+        help="device for training, e.g., cuda:0",
     )
     parent_parser.add_argument(
         "--input-mask", default=None, type=str, help="input-mask path"
@@ -42,7 +46,7 @@ locals().update(vars(args))
 
 print("###Authorization Start###")
 os.system(
-    "cd authorization; python infer.py --device %s --input_dir  %s --output_dir %s"
+    "python authorization/infer.py --device %s --input_dir  %s --output_dir %s"
     % (device, input_dir, os.path.join(output_dir, "Authorized"))
 )
 print("Output at: %s" % output_dir)
@@ -52,7 +56,7 @@ print()
 
 print("###Protection Start###")
 os.system(
-    "cd protection; python protect.py --device %s --method %s --input_dir  %s --output_dir %s"
+    "python protection/protect.py --device %s --method %s --input_dir  %s --output_dir %s"
     % (
         device,
         method,

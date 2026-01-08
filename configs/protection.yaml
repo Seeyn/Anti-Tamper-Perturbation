@@ -1,4 +1,4 @@
-mask: /home/zelin3/projects/Anti-tamper-Perturbation/masks/050_mask.pt # the path of the mask for perturbation
+mask: mask/050_mask.pt # the path of the mask for perturbation
 
 CAAT: 
   radius: 0.05 

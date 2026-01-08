@@ -82,7 +82,7 @@ def get_args():
     return args
 
 
-config = load_config("../configs/verification.yaml")
+config = load_config("configs/verification.yaml")
 
 logging.basicConfig(
     level=logging.INFO,

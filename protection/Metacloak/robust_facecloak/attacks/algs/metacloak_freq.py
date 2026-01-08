@@ -422,7 +422,7 @@ def main(args):
             config = yaml.safe_load(f)
         return config
 
-    config = load_config(os.path.abspath("../../../configs/protection.yaml"))
+    config = load_config(os.path.abspath("configs/protection.yaml"))
 
     # Generate class images if prior preservation is enabled.
     if args.with_prior_preservation:
@@ -502,9 +502,11 @@ def main(args):
         transforms.Resize(
             args.resolution, interpolation=transforms.InterpolationMode.BILINEAR
         ),
-        transforms.CenterCrop(args.resolution)
-        if args.center_crop
-        else transforms.RandomCrop(args.resolution),
+        (
+            transforms.CenterCrop(args.resolution)
+            if args.center_crop
+            else transforms.RandomCrop(args.resolution)
+        ),
     ]
     rotater = torchvision.transforms.RandomRotation(degrees=(0, args.rot_degree))
     gau_filter = transforms.GaussianBlur(

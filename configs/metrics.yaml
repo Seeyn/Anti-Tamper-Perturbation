@@ -1,14 +1,14 @@
  
-instance_dir: ['/home/zelin3/projects/camera_ready_iccv/Anti-Tamper-Perturbation/test/ATP_CAAT']
-output_dir:  /home/zelin3/projects/camera_ready_iccv/Anti-Tamper-Perturbation/metrics/results # the output dir for evaluation result, the results file will be named by the instance_dir
+instance_dir: ['test/ATP_CAAT']
+output_dir:  metrics/results # the output dir for evaluation result, the results file will be named by the instance_dir
 
 prompt: a_photo_of_sks_person # the input prompt for generation
 
 CelebA-HQ:
-  id_emb_path: /home/zelin3/Data/celeba_avg_id
+  id_emb_path: data/celeba_avg_id
 
 VGGFace2:
-  id_emb_path: /home/zelin3/Data/vggface_avg_id
+  id_emb_path: data/vggface_avg_id
 
 CAAT: 
   dir_suffix:  250/

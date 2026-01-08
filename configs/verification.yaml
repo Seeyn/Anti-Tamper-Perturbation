@@ -1,7 +1,7 @@
 
 seed: 1042
 message_length: 32
-weights:  /home/zelin3/projects/Anti-tamper-Perturbation/model_weights/random_050_block16_wreg--epoch-65000.pyt
+weights:  model_weights/random_050_block16_wreg--epoch-65000.pyt
 
 CAAT: 
   dir_suffix: 250/

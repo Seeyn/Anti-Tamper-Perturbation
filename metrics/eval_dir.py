@@ -45,7 +45,7 @@ def load_config(config_file):
 
 args = get_args()
 locals().update(vars(args))
-config_path = os.path.abspath(f"../configs/metrics.yaml")
+config_path = os.path.abspath(f"configs/metrics.yaml")
 config = load_config(config_path)
 
 if type(config["instance_dir"]) is list:

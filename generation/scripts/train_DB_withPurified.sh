@@ -42,7 +42,7 @@ accelerate launch train_dreambooth.py \
   --noise-args 2 \
   --seed=10042
 
-accelerate launch train_dreambooth.py \
+accelerate launch generation/train_dreambooth.py \
   --pretrained_model_name_or_path=$MODEL_PATH  \
   --enable_xformers_memory_efficient_attention \
   --train_text_encoder \
@@ -71,7 +71,7 @@ accelerate launch train_dreambooth.py \
   --noise-args 4 \
   --seed=10042
 
-accelerate launch train_dreambooth.py \
+accelerate launch generation/train_dreambooth.py \
   --pretrained_model_name_or_path=$MODEL_PATH  \
   --enable_xformers_memory_efficient_attention \
   --train_text_encoder \
@@ -100,7 +100,7 @@ accelerate launch train_dreambooth.py \
   --noise-args 70 \
   --seed=10042
 
-accelerate launch train_dreambooth.py \
+accelerate launch generation/train_dreambooth.py \
   --pretrained_model_name_or_path=$MODEL_PATH  \
   --enable_xformers_memory_efficient_attention \
   --train_text_encoder \

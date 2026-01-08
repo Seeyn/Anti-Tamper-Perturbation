@@ -11,7 +11,7 @@ export CLASS_DIR="data/class-person"
 export INSTANCE_DIR="$OUTPUT_DIR"
 export DREAMBOOTH_OUTPUT_DIR="$OUTPUT_DIR/DREAMBOOTH"
 
-accelerate launch train_dreambooth.py \
+accelerate launch generation/train_dreambooth.py \
   --pretrained_model_name_or_path=$MODEL_PATH  \
   --enable_xformers_memory_efficient_attention \
   --train_text_encoder \

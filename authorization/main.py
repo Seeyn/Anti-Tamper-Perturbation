@@ -40,7 +40,7 @@ def model_from_checkpoint(hidden_net, checkpoint):
 
 args = options.get_args()
 locals().update(vars(args))
-config_path = os.path.abspath("../configs/authorization.yaml")
+config_path = os.path.abspath("configs/authorization.yaml")
 config = load_config(config_path)
 
 message_length = config["message_length"]

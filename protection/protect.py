@@ -39,7 +39,7 @@ locals().update(vars(args))
 
 assert method in set(["CAAT", "ANTIDB", "ADVDM", "METACLOAK"])
 
-config_path = os.path.abspath("../configs/protection.yaml")
+config_path = os.path.abspath("configs/protection.yaml")
 config = load_config(config_path)
 device = device[-1]
 os.makedirs(output_dir, exist_ok=True)
@@ -54,7 +54,7 @@ if method == "CAAT":
             continue
         print(i_name)
         os.system(
-            "cd CAAT; CUDA_VISIBLE_DEVICES=%s bash train_CAAT_freq.sh %s %s %s"
+            "CUDA_VISIBLE_DEVICES=%s bash protection/CAAT/train_CAAT_freq.sh %s %s %s"
             % (device, each + "/set_B", output_dir + "/" + i_name, config_path)
         )
 
@@ -64,9 +64,9 @@ elif method == "METACLOAK":
         if ".pt" in i_name:
             continue
         print(i_name)
-        project_path = os.path.abspath("./Metacloak")
+        project_path = os.path.abspath("protection/Metacloak")
         os.system(
-            "cd Metacloak; CUDA_VISIBLE_DEVICES=%s bash script/gen_and_eval_freq.sh %s %s %s"
+            "CUDA_VISIBLE_DEVICES=%s bash protection/Metacloak/script/gen_and_eval_freq.sh %s %s %s"
             % (device, each, output_dir + "/" + i_name, project_path)
         )
 
@@ -77,7 +77,7 @@ elif method == "ADVDM":
             continue
         print(i_name)
         os.system(
-            "cd ADVDM; CUDA_VISIBLE_DEVICES=%s bash scripts/train_adv_freq.sh %s %s %s"
+            "CUDA_VISIBLE_DEVICES=%s bash protection/ADVDM/scripts/train_adv_freq.sh %s %s %s"
             % (device, each + "/set_B", output_dir + "/" + i_name, config_path)
         )
 
@@ -88,7 +88,7 @@ elif method == "ANTIDB":
             continue
         print(i_name)
         os.system(
-            "cd ANTIDB; CUDA_VISIBLE_DEVICES=%s bash scripts/gen_aspl_freq.sh %s %s %s"
+            "CUDA_VISIBLE_DEVICES=%s bash protection/ANTIDB/scripts/gen_aspl_freq.sh %s %s %s"
             % (device, each, output_dir + "/" + i_name, config_path)
         )
 

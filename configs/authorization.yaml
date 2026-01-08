@@ -3,14 +3,14 @@ message_length: 32
 block_size: 16
 
 data:
-  train_data_path: /home/zelin3/Data/images1024x1024
-  val_data_path: /home/zelin3/Data/CelebA-HQ 
+  train_data_path: data/images1024x1024
+  val_data_path: data/CelebA-HQ 
 
 test:
-  weights:  /home/zelin3/projects/Anti-tamper-Perturbation/model_weights/random_050_block16_wreg--epoch-65000.pyt
+  weights:  model_weights/random_050_block16_wreg--epoch-65000.pyt
   
 train: 
-  run_folder: /home/zelin3/projects/Anti-tamper-Perturbation/blocksize_var
+  run_folder: blocksize_var
   store_folder: '16_repeat'
   epoch_num: 200
   batch_size: 8

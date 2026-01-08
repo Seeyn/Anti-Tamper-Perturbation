@@ -16,7 +16,7 @@ echo $CLEAN_ADV_DIR
 echo $OUTPUT_DIR
 echo $CLASS_DIR
 
-accelerate launch attacks/aspl.py \
+accelerate launch protection/ANTIDB/attacks/aspl.py \
   --pretrained_model_name_or_path=$MODEL_PATH  \
   --enable_xformers_memory_efficient_attention \
   --instance_data_dir_for_train=$CLEAN_TRAIN_DIR \

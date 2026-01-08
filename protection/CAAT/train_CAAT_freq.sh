@@ -2,7 +2,7 @@ export MODEL_NAME="stabilityai/stable-diffusion-2-1-base"
 export OUTPUT_DIR=$2
 export INSTANCE_DIR=$1
 
-accelerate launch CAAT.py \
+accelerate launch protection/CAAT/CAAT.py \
   --pretrained_model_name_or_path=$MODEL_NAME \
   --instance_data_dir=$INSTANCE_DIR \
   --output_dir=$OUTPUT_DIR \

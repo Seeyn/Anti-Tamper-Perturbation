@@ -41,7 +41,7 @@ def load_config(config_file):
     return config
 
 
-config = load_config("../configs/authorization.yaml")
+config = load_config("configs/authorization.yaml")
 
 logging.basicConfig(
     level=logging.INFO,
