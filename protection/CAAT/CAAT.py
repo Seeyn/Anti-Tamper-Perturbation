@@ -39,7 +39,6 @@ from torchvision import transforms
 from tqdm.auto import tqdm
 from transformers import AutoTokenizer, PretrainedConfig
 
-
 logger = get_logger(__name__)
 
 
@@ -155,9 +154,11 @@ class CustomDiffusionDataset(Dataset):
                 transforms.Resize(
                     size, interpolation=transforms.InterpolationMode.BILINEAR
                 ),
-                transforms.CenterCrop(size)
-                if center_crop
-                else transforms.RandomCrop(size),
+                (
+                    transforms.CenterCrop(size)
+                    if center_crop
+                    else transforms.RandomCrop(size)
+                ),
                 transforms.ToTensor(),
                 transforms.Normalize([0.5], [0.5]),
             ]
@@ -171,8 +172,9 @@ class CustomDiffusionDataset(Dataset):
         factor = self.size // self.mask_size
         if scale > self.size:
             outer, inner = scale, self.size
-        top, left = np.random.randint(0, outer - inner + 1), np.random.randint(
-            0, outer - inner + 1
+        top, left = (
+            np.random.randint(0, outer - inner + 1),
+            np.random.randint(0, outer - inner + 1),
         )
         image = image.resize((scale, scale), resample=resample)
         image = np.array(image).astype(np.uint8)

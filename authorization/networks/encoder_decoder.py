@@ -13,7 +13,6 @@ class EncoderDecoder(nn.Module):
         pixel_space=False,
         block_size=16,
     ):
-
         super(EncoderDecoder, self).__init__()
         self.encoder = Encoder(encode_message_length)
         if not pixel_space:
@@ -25,7 +24,6 @@ class EncoderDecoder(nn.Module):
         self.decoder = Decoder(decode_message_length)
 
     def forward(self, image, message, random_mask=None):
-
         img_dct_masked, img_dct, random_mask = self.dctlayer(
             image, random_mask=random_mask
         )

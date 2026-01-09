@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn.functional as F
 
@@ -41,7 +40,6 @@ class Multi_Fidelity_Loss(torch.nn.Module):
         super(Multi_Fidelity_Loss, self).__init__()
 
     def forward(self, p, g):
-
         loss = 0
         for i in range(p.size(1)):
             p_i = p[:, i]

@@ -470,7 +470,6 @@ def find_without_savepkl(
     file_path = db_path_obj / file_name
 
     if file_path.exists():
-
         #     if not silent:
         #         print(
         #             f"WARNING: Representations for images in {db_path} folder were previously stored"

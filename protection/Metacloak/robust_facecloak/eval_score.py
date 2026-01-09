@@ -86,7 +86,9 @@ def loop_to_get_overall_score(
 class ScoreEval:
     def __init__(
         self,
-        func_get_score_of_one_image=lambda image_dir, clean_ref_dir, type_name="face": 0,
+        func_get_score_of_one_image=lambda image_dir,
+        clean_ref_dir,
+        type_name="face": 0,
     ):
         self.func_get_score_of_one_image = func_get_score_of_one_image
 
@@ -337,7 +339,6 @@ def get_score(
     clean_ref_dir=None,
     type_name="person",
 ):
-
     if type_name == "person":
         type_name = "face"
 

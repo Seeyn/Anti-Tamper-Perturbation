@@ -66,7 +66,6 @@ class HIDNet:
         self.reg_loss = self.config["train"]["reg_loss"]
 
     def train_one_batch(self, batch):
-
         images, messages = batch
 
         batch_size = images.shape[0]
@@ -172,14 +171,12 @@ class HIDNet:
         return losses, (encoded_images, random_mask, decoded_messages)
 
     def val_one_batch(self, batch):
-
         images, messages = batch
 
         batch_size = images.shape[0]
         self.encoder_decoder.eval()
         self.discriminator.eval()
         with torch.no_grad():
-
             d_target_label_cover = torch.full((batch_size, 1), 1.0, device=self.device)
             d_target_label_encoded = torch.full(
                 (batch_size, 1), 0.0, device=self.device

@@ -67,7 +67,6 @@ class DCTlayer(nn.Module):
         self.block_size = block_size
 
     def forward(self, x, img_dct=None, random_mask=None):
-
         if not self.inverse:
             img_dct = dct_img(x, block_size=self.block_size)
             # generate random 0-1 mask obey bernoulli distribution (p = 0.5)

@@ -168,9 +168,10 @@ for path in tqdm(paths):
     encoded_dct, encoded_image = model.idctlayer(img_dct_masked, img_dct, random_mask)
     decoded_message = model.decoder(encoded_dct)
     decoded_rounded = decoded_message.detach().cpu().numpy().round().clip(0, 1)
-    bitwise_error = np.sum(
-        np.abs(decoded_rounded - message.round().detach().cpu().numpy())
-    ) / (message.shape[0])
+    bitwise_error = (
+        np.sum(np.abs(decoded_rounded - message.round().detach().cpu().numpy()))
+        / (message.shape[0])
+    )
     if bitwise_error > bit_error_threshold:
         unauthorized_image_num += 1
         id_set[id_dir] += 1

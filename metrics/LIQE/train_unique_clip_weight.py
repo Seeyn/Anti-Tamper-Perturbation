@@ -260,7 +260,6 @@ def calc_loss(
     scene_pred,
     scene_gt,
 ):
-
     quality_loss = loss_m4(quality_pred, num_sample_per_task, quality_gt.detach())
     distortion_loss = loss_img2(distortion_pred, distortion_gt.detach())
     scene_loss = loss_scene(scene_pred, scene_gt.detach())
@@ -269,7 +268,6 @@ def calc_loss(
 
 
 def calc_loss2(quality_pred, quality_gt, num_sample_per_task, scene_pred, scene_gt):
-
     quality_loss = loss_m4(quality_pred, num_sample_per_task, quality_gt.detach())
     scene_loss = loss_scene(scene_pred, scene_gt.detach())
 
@@ -279,7 +277,6 @@ def calc_loss2(quality_pred, quality_gt, num_sample_per_task, scene_pred, scene_
 def calc_loss3(
     quality_pred, quality_gt, num_sample_per_task, distortion_pred, distortion_gt
 ):
-
     quality_loss = loss_m4(quality_pred, num_sample_per_task, quality_gt.detach())
     distortion_loss = loss_img2(distortion_pred, distortion_gt.detach())
 
@@ -519,15 +516,15 @@ def train(model, best_result, best_epoch, srcc_dict, scene_dict, type_dict):
 
         # statistics
         running_loss = beta * running_loss + (1 - beta) * total_loss.data.item()
-        loss_corrected = running_loss / (1 - beta ** local_counter)
+        loss_corrected = running_loss / (1 - beta**local_counter)
 
         current_time = time.time()
         duration = current_time - start_time
         running_duration = beta * running_duration + (1 - beta) * duration
-        duration_corrected = running_duration / (1 - beta ** local_counter)
+        duration_corrected = running_duration / (1 - beta**local_counter)
         examples_per_sec = x.size(0) / duration_corrected
         format_str = (
-            "(E:%d, S:%d / %d) [Loss = %.4f] (%.1f samples/sec; %.3f " "sec/batch)"
+            "(E:%d, S:%d / %d) [Loss = %.4f] (%.1f samples/sec; %.3f sec/batch)"
         )
         print(
             format_str
@@ -831,7 +828,6 @@ def eval(loader, phase, dataset):
     num_scene = 0
     num_dist = 0
     for step, sample_batched in enumerate(loader, 0):
-
         x, gmos, dist, scene1, scene2, scene3, valid = (
             sample_batched["I"],
             sample_batched["mos"],

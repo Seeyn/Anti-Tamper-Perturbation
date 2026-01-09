@@ -50,7 +50,6 @@ def load_data(
 from io import BytesIO
 
 
-
 def jpeg_compress_image(image: Image.Image, quality: int = 85) -> Image.Image:
     """
     Compresses the input PIL Image object using JPEG compression and returns

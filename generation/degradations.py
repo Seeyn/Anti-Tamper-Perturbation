@@ -25,7 +25,7 @@ def sigma_matrix2(sig_x, sig_y, theta):
     Returns:
         ndarray: Rotated sigma matrix.
     """
-    d_matrix = np.array([[sig_x ** 2, 0], [0, sig_y ** 2]])
+    d_matrix = np.array([[sig_x**2, 0], [0, sig_y**2]])
     u_matrix = np.array(
         [[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]]
     )
@@ -108,7 +108,7 @@ def bivariate_Gaussian(kernel_size, sig_x, sig_y, theta, grid=None, isotropic=Tr
     if grid is None:
         grid, _, _ = mesh_grid(kernel_size)
     if isotropic:
-        sigma_matrix = np.array([[sig_x ** 2, 0], [0, sig_x ** 2]])
+        sigma_matrix = np.array([[sig_x**2, 0], [0, sig_x**2]])
     else:
         sigma_matrix = sigma_matrix2(sig_x, sig_y, theta)
     kernel = pdf2(sigma_matrix, grid)
@@ -140,7 +140,7 @@ def bivariate_generalized_Gaussian(
     if grid is None:
         grid, _, _ = mesh_grid(kernel_size)
     if isotropic:
-        sigma_matrix = np.array([[sig_x ** 2, 0], [0, sig_x ** 2]])
+        sigma_matrix = np.array([[sig_x**2, 0], [0, sig_x**2]])
     else:
         sigma_matrix = sigma_matrix2(sig_x, sig_y, theta)
     inverse_sigma = np.linalg.inv(sigma_matrix)
@@ -177,7 +177,7 @@ def bivariate_plateau(
     if grid is None:
         grid, _, _ = mesh_grid(kernel_size)
     if isotropic:
-        sigma_matrix = np.array([[sig_x ** 2, 0], [0, sig_x ** 2]])
+        sigma_matrix = np.array([[sig_x**2, 0], [0, sig_x**2]])
     else:
         sigma_matrix = sigma_matrix2(sig_x, sig_y, theta)
     inverse_sigma = np.linalg.inv(sigma_matrix)
@@ -471,7 +471,7 @@ def circular_lowpass_kernel(cutoff, kernel_size, pad_to=0):
         ),
         [kernel_size, kernel_size],
     )
-    kernel[(kernel_size - 1) // 2, (kernel_size - 1) // 2] = cutoff ** 2 / (4 * np.pi)
+    kernel[(kernel_size - 1) // 2, (kernel_size - 1) // 2] = cutoff**2 / (4 * np.pi)
     kernel = kernel / np.sum(kernel)
     if pad_to > kernel_size:
         pad_size = (pad_to - kernel_size) // 2

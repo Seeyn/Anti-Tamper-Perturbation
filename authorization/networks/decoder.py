@@ -11,7 +11,6 @@ class Decoder(nn.Module):
     """
 
     def __init__(self, message_length=30):
-
         super(Decoder, self).__init__()
         self.channels = 64
         self.num_blocks = 7

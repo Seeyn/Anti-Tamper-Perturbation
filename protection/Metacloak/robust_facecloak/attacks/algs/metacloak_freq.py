@@ -91,7 +91,6 @@ def train_few_step(
 
     pbar = tqdm(total=num_steps, desc="training")
     for step in range(num_steps):
-
         if step_wise_save and ((step + 1) % save_step == 0 or step == 0):
             # make sure the model state dict is put to cpu
             step2modelstate[step] = {
@@ -226,7 +225,6 @@ def load_model(args, model_path):
 
 
 def parse_args():
-
     parser = share_parse_args()
 
     parser.add_argument(
@@ -637,7 +635,6 @@ def main(args):
                 f = [unet, text_encoder]
 
                 for j in range(args.interval // args.advance_steps):
-
                     perturbed_data = defender.perturb_freq(
                         f,
                         perturbed_data,

@@ -8,7 +8,6 @@ class ConvBNRelu(nn.Module):
     """
 
     def __init__(self, channels_in, channels_out, stride=1):
-
         super(ConvBNRelu, self).__init__()
 
         self.layers = nn.Sequential(

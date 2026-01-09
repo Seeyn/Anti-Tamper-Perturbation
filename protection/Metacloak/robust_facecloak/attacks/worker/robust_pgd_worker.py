@@ -280,7 +280,6 @@ class RobustPGDAttacker:
         for _step in range(self.steps):
             x.requires_grad = True
             for _sample in range(self.sample_num):
-
                 def_x_trans = self.transform(x).to(device, dtype=weight_dtype)
                 adv_x = self.attacker.perturb(
                     models,
@@ -407,7 +406,6 @@ class RobustPGDAttacker:
             x.requires_grad = True
 
             for _sample in range(self.sample_num):
-
                 def_x_trans = self.transform(x).to(device, dtype=weight_dtype)
                 adv_x = self.attacker.perturb_freq(
                     models,

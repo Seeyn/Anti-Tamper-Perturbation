@@ -375,7 +375,6 @@ def eval(loader, phase, dataset):
     num_scene = 0
     num_dist = 0
     for step, sample_batched in enumerate(loader, 0):
-
         x, gmos, dist, scene1, scene2, scene3, valid = (
             sample_batched["I"],
             sample_batched["mos"],

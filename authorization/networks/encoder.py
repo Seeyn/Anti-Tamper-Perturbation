@@ -29,7 +29,6 @@ class Encoder(nn.Module):
         self.final_layer = nn.Conv2d(self.conv_channels, 3, kernel_size=1)
 
     def forward(self, image, message):
-
         # First, add two dummy dimensions in the end of the message.
         # This is required for the .expand to work correctly
         expanded_message = message.unsqueeze(-1)

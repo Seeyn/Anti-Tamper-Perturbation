@@ -91,7 +91,6 @@ if type(config["instance_dir"]) is list:
             )
             image_paths = []
             for input_path in tqdm(generated_img_paths):
-
                 input_file = Path(str(input_path).replace("checkpoint-1000", item))
 
                 avg_id_embedding = avg_id_set[

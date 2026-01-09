@@ -19,7 +19,6 @@ except ImportError:
 
 
 def set_dataset(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
-
     data = ImageDataset2(
         csv_file=csv_file,
         img_dir=data_set,
@@ -41,7 +40,6 @@ def set_dataset(csv_file, bs, data_set, num_workers, preprocess, num_patch, test
 
 
 def set_dataset3(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
-
     data = ImageDataset3(
         csv_file=csv_file,
         img_dir=data_set,
@@ -63,7 +61,6 @@ def set_dataset3(csv_file, bs, data_set, num_workers, preprocess, num_patch, tes
 
 
 def set_dataset2(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
-
     data = ImageDataset_Inf(
         csv_file=csv_file,
         img_dir=data_set,
@@ -82,7 +79,6 @@ def set_dataset2(csv_file, bs, data_set, num_workers, preprocess, num_patch, tes
 
 
 def set_spaq(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
-
     data = ImageDataset_SPAQ(
         csv_file=csv_file,
         img_dir=data_set,
@@ -104,7 +100,6 @@ def set_spaq(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
 
 
 def set_tid(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
-
     data = ImageDataset_TID(
         csv_file=csv_file,
         img_dir=data_set,
@@ -126,7 +121,6 @@ def set_tid(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
 
 
 def set_pipal(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
-
     data = ImageDataset_PIPAL(
         csv_file=csv_file,
         img_dir=data_set,
@@ -148,7 +142,6 @@ def set_pipal(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
 
 
 def set_ava(csv_file, bs, data_set, num_workers, preprocess, num_patch, test):
-
     data = ImageDataset_ava(
         npy_file="./ava_test.npy", img_dir=data_set, preprocess=preprocess
     )

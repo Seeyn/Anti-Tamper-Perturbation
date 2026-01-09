@@ -97,10 +97,13 @@ for _ in range(epoch_num):
                 message = utils.get_phis(
                     phi_dimension=message_length, batch_size=image.shape[0]
                 ).to(device)
-                losses, (
-                    encoded_images,
-                    random_mask,
-                    decoded_messages,
+                (
+                    losses,
+                    (
+                        encoded_images,
+                        random_mask,
+                        decoded_messages,
+                    ),
                 ) = model.val_one_batch([image, message])
                 for key in losses:
                     if key not in val_losses:

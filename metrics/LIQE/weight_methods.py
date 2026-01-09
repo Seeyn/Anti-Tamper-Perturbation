@@ -132,7 +132,7 @@ class GradNorm(WeightingMethod):
             loss_ratios = losses / self.init_losses
             # inverse training rate r(t)
             inverse_train_rates = loss_ratios / loss_ratios.mean()
-            constant_term = norms.mean() * (inverse_train_rates ** self.alpha)
+            constant_term = norms.mean() * (inverse_train_rates**self.alpha)
 
         grad_norm_loss = (norms - constant_term).abs().sum()
         self.weights.grad = torch.autograd.grad(grad_norm_loss, self.weights)[0]

@@ -1,4 +1,4 @@
-﻿# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
+# Copyright (c) 2021, NVIDIA CORPORATION.  All rights reserved.
 #
 # NVIDIA CORPORATION and its licensors retain all intellectual property
 # and proprietary rights in and to this software, related documentation
@@ -58,9 +58,7 @@ try:
     nan_to_num = torch.nan_to_num  # 1.8.0a0
 except AttributeError:
 
-    def nan_to_num(
-        input, nan=0.0, posinf=None, neginf=None, *, out=None
-    ):  # pylint: disable=redefined-builtin
+    def nan_to_num(input, nan=0.0, posinf=None, neginf=None, *, out=None):  # pylint: disable=redefined-builtin
         assert isinstance(input, torch.Tensor)
         if posinf is None:
             posinf = torch.finfo(input.dtype).max
@@ -106,13 +104,17 @@ def assert_shape(tensor, ref_shape):
         if ref_size is None:
             pass
         elif isinstance(ref_size, torch.Tensor):
-            with suppress_tracer_warnings():  # as_tensor results are registered as constants
+            with (
+                suppress_tracer_warnings()
+            ):  # as_tensor results are registered as constants
                 symbolic_assert(
                     torch.equal(torch.as_tensor(size), ref_size),
                     f"Wrong size for dimension {idx}",
                 )
         elif isinstance(size, torch.Tensor):
-            with suppress_tracer_warnings():  # as_tensor results are registered as constants
+            with (
+                suppress_tracer_warnings()
+            ):  # as_tensor results are registered as constants
                 symbolic_assert(
                     torch.equal(size, torch.as_tensor(ref_size)),
                     f"Wrong size for dimension {idx}: expected {ref_size}",

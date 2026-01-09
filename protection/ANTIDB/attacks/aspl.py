@@ -639,7 +639,7 @@ def pgd_attack(
         perturbed_images = torch.clamp(original_images + eta, min=-1, max=+1).detach_()
         # print(f"PGD loss - step {step}, loss: {loss.detach().item()}")
         total_loss += loss.detach().item()
-    print(f"Mean loss: {total_loss/num_steps}")
+    print(f"Mean loss: {total_loss / num_steps}")
     return perturbed_images
 
 
@@ -746,7 +746,6 @@ def pgd_attack_freq(
         # frequency-domain attack version
 
         def zero_low_frequencies(x):
-
             x_dct = dct_img(x)
             x_dct *= random_mask
             x_idct = idct_img(float(config["ANTIDB"]["step_size"]) * x_dct.sign())
@@ -775,7 +774,7 @@ def pgd_attack_freq(
         # print((perturbed_images_dct*(1-mask)-original_images_dct*(1-mask)).abs().max(),(adv_images_dct-original_images_dct).abs().max())
 
         total_loss += loss.detach().item()
-    print(f"Mean loss: {total_loss/num_steps}")
+    print(f"Mean loss: {total_loss / num_steps}")
     return perturbed_images
 
 
@@ -906,7 +905,7 @@ def pgd_attack_freq_pixelsign(
         perturbed_images = torch.clamp(original_images + eta, min=-1, max=+1).detach_()
 
         total_loss += loss.detach().item()
-    print(f"Mean loss: {total_loss/num_steps}")
+    print(f"Mean loss: {total_loss / num_steps}")
     return perturbed_images
 
 
@@ -1109,9 +1108,9 @@ def main(args):
     target_latent_tensor = None
     if args.target_image_path is not None:
         target_image_path = Path(args.target_image_path)
-        assert (
-            target_image_path.is_file()
-        ), f"Target image path {target_image_path} does not exist"
+        assert target_image_path.is_file(), (
+            f"Target image path {target_image_path} does not exist"
+        )
 
         target_image = (
             Image.open(target_image_path)
@@ -1193,7 +1192,7 @@ def main(args):
                 )
             ]
             for img_pixel, img_name in zip(noised_imgs, img_names):
-                save_path = save_folder / f"{i+1}_noise_{img_name}"
+                save_path = save_folder / f"{i + 1}_noise_{img_name}"
                 Image.fromarray(
                     (img_pixel * 127.5 + 128)
                     .clamp(0, 255)
@@ -1202,7 +1201,7 @@ def main(args):
                     .cpu()
                     .numpy()
                 ).save(save_path)
-            print(f"Saved noise at step {i+1} to {save_folder}")
+            print(f"Saved noise at step {i + 1} to {save_folder}")
 
 
 if __name__ == "__main__":

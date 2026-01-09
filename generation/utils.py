@@ -86,7 +86,6 @@ class Degradation:
             self.downsample_scale = noise_args
 
     def degrade(self, img_gt):
-
         # ------------------------ generate lq image ------------------------ #
         if self.noise_type == "Resize":
             # downsample

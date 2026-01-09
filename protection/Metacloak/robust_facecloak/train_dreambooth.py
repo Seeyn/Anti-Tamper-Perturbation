@@ -339,7 +339,6 @@ class DreamBoothDataset(Dataset):
             self.sr_pipeline = sr_pipeline.to("cuda")
 
         if self.args.transform_tvm:
-
             import cvxpy as cp
 
             def get_tvm_image(img, TVM_WEIGHT=0.01, PIXEL_DROP_RATE=0.02):
@@ -1140,7 +1139,6 @@ def main(args):
         print("Finish training")
         final_save_path = os.path.join(args.output_dir, f"checkpoint-{global_step}")
         if args.log_score:
-
             from eval_score import get_score
 
             clean_ref_db = args.clean_ref_db
@@ -1162,7 +1160,6 @@ def main(args):
                     prompt2scorelist[pid] = res
 
                     for i, images in enumerate(os.listdir(im_dir)):
-
                         import numpy as np
 
                         # check if the image is valid
