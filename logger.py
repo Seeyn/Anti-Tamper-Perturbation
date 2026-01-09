@@ -11,7 +11,7 @@ from rich.logging import RichHandler
 from rich.traceback import install
 
 # Install rich traceback for better error visualization
-install(show_locals=True)
+install(show_locals=False, max_frames=5, width=120)
 
 
 class InterceptHandler(logging.Handler):
