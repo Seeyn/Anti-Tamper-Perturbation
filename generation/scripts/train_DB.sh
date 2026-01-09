@@ -3,7 +3,7 @@ set -e
 trap "echo '[!] 任务被中断'; exit 1" INT
 
 export EXPERIMENT_NAME="ASPL_purified_freq"
-export MODEL_PATH="stabilityai/stable-diffusion-2-1-base"
+export MODEL_PATH="Manojb/stable-diffusion-2-1-base"
 export OUTPUT_DIR=$1
 export CLASS_DIR="data/class-person"
 

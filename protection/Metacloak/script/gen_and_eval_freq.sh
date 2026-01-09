@@ -14,9 +14,9 @@ export seed=0
 # for other models, change the name and path correspondingly
 # SD21, SD21base, SD15, SD14
 export gen_model_name=SD21base # the model to generate the noise 
-export gen_model_path=stabilityai/stable-diffusion-2-1-base
+export gen_model_path=Manojb/stable-diffusion-2-1-base
 export eval_model_name=SD21base # the model that performs the evaluation on noise 
-export eval_model_path=stabilityai/stable-diffusion-2-1-base
+export eval_model_path=Manojb/stable-diffusion-2-1-base
 export r=11 # the noise level of perturbation
 export gen_prompt=sks # the prompt used to craft the noise
 export eval_prompt=sks # the prompt used to do dreambooth training
